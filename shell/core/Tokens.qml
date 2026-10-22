@@ -32,6 +32,7 @@ Singleton {
     readonly property real marginRow: 14
     readonly property real marginWide: 16
     readonly property real marginPanel: 18
+    readonly property real searchWidth: 716
     readonly property real marginLarge: 20
     readonly property real marginField: 24
     readonly property real marginScreen: 32

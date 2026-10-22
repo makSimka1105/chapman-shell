@@ -9,17 +9,14 @@ FocusScope {
     property int selected: 0
     property int armed: -1
     readonly property var results: search.build(field.text)
-    readonly property bool showPreview: results.length > 0
-    readonly property real compactWidth: 680
-    readonly property real previewWidth: 360
-    readonly property real minContentHeight: 320
+    readonly property bool hasResults: results.length > 0
     readonly property real fieldHeight: 60
     readonly property real rowHeight: 52
     readonly property real headerHeight: 28
     readonly property int visibleRows: 8
     readonly property real gap: 12
     readonly property real padding: Tokens.marginPanel
-    readonly property real slabHeight: showPreview ? Math.max(list.height, minContentHeight) + 18 : 0
+    readonly property real slabHeight: hasResults ? list.height + 18 : 0
 
     signal closed
 
@@ -64,8 +61,8 @@ FocusScope {
         selected = index;
     }
 
-    implicitWidth: (showPreview ? compactWidth + previewWidth : compactWidth) + 2 * padding
-    implicitHeight: padding * 2 + fieldHeight + (showPreview ? gap + slabHeight : 0)
+    implicitWidth: Tokens.searchWidth
+    implicitHeight: padding * 2 + fieldHeight + (hasResults ? gap + slabHeight : 0)
     onResultsChanged: {
         if (selected >= results.length || results[selected].header)
             selected = Math.max(0, firstItem());
@@ -97,14 +94,14 @@ FocusScope {
         y: root.padding + root.fieldHeight + root.gap
         width: root.width - 2 * root.padding
         height: root.slabHeight
-        visible: root.showPreview
+        visible: root.hasResults
         clip: true
 
         SpotlightResults {
             id: list
             y: 9
             x: 9
-            width: root.compactWidth - 18
+            width: parent.width - 18
             height: Math.min(contentHeight, root.visibleRows * root.rowHeight)
             model: root.results
             currentIndex: root.selected
@@ -116,24 +113,6 @@ FocusScope {
             collapsed: true
             onHovered: index => root.selected = index
             onClicked: index => root.activate(index)
-        }
-
-        Rectangle {
-            anchors.top: parent.top
-            anchors.topMargin: Tokens.marginPanel
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Tokens.marginPanel
-            x: root.compactWidth
-            width: 1
-            color: Qt.alpha(Theme.text, 0.08)
-        }
-
-        Preview {
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            width: root.previewWidth
-            item: root.results[root.selected] ?? null
         }
     }
 }
