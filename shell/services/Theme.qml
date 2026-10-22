@@ -8,7 +8,7 @@ Singleton {
 
     readonly property string home: Quickshell.env("HOME")
     readonly property string name: current.text().trim()
-    readonly property string folder: home + "/.config/themes/" + name
+    readonly property string folder: home + "/.config/DankMaterialShell/themes/" + name
     readonly property var theme: themeFile.text() ? JSON.parse(themeFile.text()) : ({})
     readonly property bool custom: theme.dms?.currentThemeName === "custom"
     readonly property var palette: {
