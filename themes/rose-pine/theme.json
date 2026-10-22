@@ -1,0 +1,64 @@
+{
+  "name": "Rose Pine",
+  "variant": "dark",
+  "wallpapers": [
+    "/home/maksibon/wallpapers/lock_screen.png",
+    "/home/maksibon/wallpapers/wallhaven-lygzqq.jpg"
+  ],
+  "glass": {
+    "opacity": 0.8,
+    "blur_passes": 3,
+    "blur_offset": 4.0,
+    "blur_noise": 0.03,
+    "blur_saturation": 1.8
+  },
+  "colors": {
+    "background": "#191724",
+    "surface": "#1f1d2e",
+    "surface_dim": "#16141f",
+    "surface_bright": "#26233a",
+    "surface_container": "#1f1d2e",
+    "surface_container_high": "#26233a",
+    "surface_container_highest": "#403d52",
+    "on_surface": "#e0def4",
+    "on_surface_variant": "#908caa",
+    "outline": "#6e6a86",
+    "outline_variant": "#403d52",
+    "primary": "#c4a7e7",
+    "on_primary": "#191724",
+    "primary_container": "#403d52",
+    "primary_fixed": "#dcc7f2",
+    "secondary": "#9ccfd8",
+    "secondary_container": "#2a4a52",
+    "tertiary": "#ebbcba",
+    "tertiary_fixed": "#f3d4d2",
+    "error": "#eb6f92",
+    "warning": "#f6c177",
+    "info": "#9ccfd8"
+  },
+  "terminal": {
+    "background": "#191724",
+    "foreground": "#e0def4",
+    "cursor": "#e0def4",
+    "selection_background": "#403d52",
+    "selection_foreground": "#e0def4",
+    "palette": [
+      "#26233a",
+      "#eb6f92",
+      "#31748f",
+      "#f6c177",
+      "#9ccfd8",
+      "#c4a7e7",
+      "#ebbcba",
+      "#e0def4",
+      "#6e6a86",
+      "#eb6f92",
+      "#31748f",
+      "#f6c177",
+      "#9ccfd8",
+      "#c4a7e7",
+      "#ebbcba",
+      "#e0def4"
+    ]
+  }
+}

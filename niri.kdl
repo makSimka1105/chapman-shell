@@ -9,26 +9,4 @@ binds {
     Super+Shift+S hotkey-overlay-title="Screenshot: Interactive" { screenshot; }
 }
 
-layout {
-    background-color "transparent"
-
-    focus-ring {
-        active-color   "#8fa8a0"
-        inactive-color "#3a3a3a"
-        urgent-color   "#cf7563"
-    }
-
-    shadow {
-        color "#00000070"
-    }
-
-    tab-indicator {
-        active-color   "#8fa8a0"
-        inactive-color "#3a3a3a"
-        urgent-color   "#cf7563"
-    }
-
-    insert-hint {
-        color "#8fa8a080"
-    }
-}
+include optional=true "/home/maksibon/.local/state/chapman-shell/niri.kdl"

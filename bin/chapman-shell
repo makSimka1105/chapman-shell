@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+"""chapman-shell themes: palette, glass settings and wallpapers rendered into app files.
+
+chapman-shell theme                 list themes, * marks the current one
+chapman-shell theme <id>            apply a theme
+chapman-shell theme --json          themes for the switcher
+chapman-shell wallpaper <path>      change the wallpaper inside the current theme
+chapman-shell reapply               render the current theme again, glass if none
+"""
+
+import json
+import os
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+THEMES = ROOT / "themes"
+ADAPTERS = ROOT / "adapters"
+STATE = Path(os.environ.get("CHAPMAN_STATE") or Path.home() / ".local/state/chapman-shell")
+CURRENT = STATE / "current.json"
+COLORS = STATE / "colors.json"
+DANK_SYNC = Path.home() / ".local/bin/dank-themes-sync"
+UNIT = "chapman-shell.service"
+DEFAULT_THEME = "glass"
+PLACEHOLDER = re.compile(r"\{\{([\w.]+)\}\}")
+SWATCHES = ["primary", "surface", "on_surface", "secondary", "tertiary", "error"]
+ZED_ALPHA_GAP = 0.12
+
+
+def theme_ids():
+    return sorted(path.parent.name for path in THEMES.glob("*/theme.json"))
+
+
+def load_theme(theme_id):
+    if theme_id not in theme_ids():
+        sys.exit(f"chapman-shell: unknown theme {theme_id}, have: {' '.join(theme_ids())}")
+    return json.loads((THEMES / theme_id / "theme.json").read_text())
+
+
+def current():
+    return json.loads(CURRENT.read_text()) if CURRENT.exists() else {}
+
+
+def alpha_hex(opacity):
+    return f"{round(max(0.0, opacity) * 255):02x}"
+
+
+def rgb(color):
+    return ",".join(str(int(color[i:i + 2], 16)) for i in (1, 3, 5))
+
+
+def context(theme, wallpaper):
+    glass = dict(theme["glass"])
+    glass["alpha"] = alpha_hex(glass["opacity"])
+    glass["alpha_zed"] = alpha_hex(glass["opacity"] - ZED_ALPHA_GAP)
+    return {"colors": theme["colors"], "terminal": theme["terminal"], "glass": glass, "wallpaper": wallpaper}
+
+
+def lookup(values, path):
+    node = values
+    for part in path.split("."):
+        node = node[int(part)] if isinstance(node, list) else node[part]
+    return node
+
+
+def render(template, values):
+    def replace(match):
+        path = match.group(1)
+        if path.endswith(".rgb"):
+            return rgb(lookup(values, path[:-4]))
+        return str(lookup(values, path))
+
+    return PLACEHOLDER.sub(replace, template)
+
+
+def write_colors(theme):
+    palette = {f"color{index}": color for index, color in enumerate(theme["terminal"]["palette"])}
+    payload = {"mode": theme["variant"], "colors": {theme["variant"]: theme["colors"]}, "dank16": palette}
+    COLORS.write_text(json.dumps(payload, indent=2) + "\n")
+
+
+def shell_active():
+    return subprocess.run(["systemctl", "--user", "is-active", "--quiet", UNIT], check=False).returncode == 0
+
+
+def reload_apps():
+    subprocess.run(["pkill", "-USR2", "-f", "^ghostty( |$)"], capture_output=True, check=False)
+    subprocess.run(["niri", "msg", "action", "load-config-file"], capture_output=True, check=False)
+    if DANK_SYNC.exists():
+        subprocess.run([DANK_SYNC], env={**os.environ, "DANK_COLORS": str(COLORS)}, capture_output=True, check=False)
+
+
+def apply(theme_id, wallpaper=None):
+    theme = load_theme(theme_id)
+    wallpaper = wallpaper or theme["wallpapers"][0]
+    STATE.mkdir(parents=True, exist_ok=True)
+    CURRENT.write_text(json.dumps({"theme": theme_id, "wallpaper": wallpaper}) + "\n")
+    values = context(theme, wallpaper)
+    for adapter in ADAPTERS.iterdir():
+        (STATE / adapter.name).write_text(render(adapter.read_text(), values))
+    write_colors(theme)
+    if shell_active():
+        reload_apps()
+
+
+def switch_theme(theme_id):
+    chosen = current()
+    wallpaper = chosen.get("wallpaper")
+    if wallpaper not in load_theme(theme_id)["wallpapers"]:
+        wallpaper = None
+    apply(theme_id, wallpaper)
+    print(theme_id)
+
+
+def switch_wallpaper(path):
+    chosen = current()
+    if not chosen:
+        sys.exit("chapman-shell: no theme applied yet")
+    if not Path(path).is_file():
+        sys.exit(f"chapman-shell: {path} is not a file")
+    apply(chosen["theme"], str(Path(path).resolve()))
+
+
+def listing():
+    now = current().get("theme")
+    for theme_id in theme_ids():
+        print(("* " if theme_id == now else "  ") + theme_id)
+
+
+def listing_json():
+    now = current().get("theme")
+    entries = []
+    for theme_id in theme_ids():
+        theme = load_theme(theme_id)
+        entries.append({
+            "id": theme_id,
+            "name": theme["name"],
+            "current": theme_id == now,
+            "wallpapers": theme["wallpapers"],
+            "colors": {key: theme["colors"][key] for key in SWATCHES},
+        })
+    print(json.dumps(entries, ensure_ascii=False))
+
+
+def main(args):
+    if args[:1] == ["theme"] and len(args) == 1:
+        listing()
+    elif args[:1] == ["theme"] and args[1:] == ["--json"]:
+        listing_json()
+    elif args[:1] == ["theme"] and len(args) == 2:
+        switch_theme(args[1])
+    elif args == ["reapply"]:
+        apply(current().get("theme", DEFAULT_THEME), current().get("wallpaper"))
+    elif args[:1] == ["wallpaper"] and len(args) == 2:
+        switch_wallpaper(args[1])
+    else:
+        sys.exit(__doc__.strip())
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

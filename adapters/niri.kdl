@@ -1,0 +1,43 @@
+layout {
+    background-color "transparent"
+
+    focus-ring {
+        active-color   "{{colors.primary}}"
+        inactive-color "{{colors.outline}}"
+        urgent-color   "{{colors.error}}"
+    }
+
+    border {
+        active-color   "{{colors.primary}}"
+        inactive-color "{{colors.outline}}"
+        urgent-color   "{{colors.error}}"
+    }
+
+    shadow {
+        color "#00000070"
+    }
+
+    tab-indicator {
+        active-color   "{{colors.primary}}"
+        inactive-color "{{colors.outline}}"
+        urgent-color   "{{colors.error}}"
+    }
+
+    insert-hint {
+        color "{{colors.primary}}80"
+    }
+}
+
+recent-windows {
+    highlight {
+        active-color   "{{colors.primary_container}}"
+        urgent-color   "{{colors.error}}"
+    }
+}
+
+blur {
+    passes {{glass.blur_passes}}
+    offset {{glass.blur_offset}}
+    noise {{glass.blur_noise}}
+    saturation {{glass.blur_saturation}}
+}

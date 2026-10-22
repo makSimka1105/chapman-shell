@@ -7,20 +7,16 @@ Singleton {
     id: root
 
     readonly property string home: Quickshell.env("HOME")
-    readonly property string name: current.text().trim()
-    readonly property string folder: home + "/.config/DankMaterialShell/themes/" + name
+    readonly property string runtime: Quickshell.env("CHAPMAN_STATE") || home + "/.local/state/chapman-shell"
+    readonly property var selection: currentFile.text() ? JSON.parse(currentFile.text()) : ({})
+    readonly property string name: selection.theme ?? "glass"
+    readonly property string folder: Quickshell.shellDir + "/../themes/" + name
     readonly property var theme: themeFile.text() ? JSON.parse(themeFile.text()) : ({})
-    readonly property bool custom: theme.dms?.currentThemeName === "custom"
     readonly property var palette: {
-        if (custom && paletteFile.text()) {
-            const colors = JSON.parse(paletteFile.text()).dark;
-            return { text: colors.surfaceText, accent: colors.primary, warning: colors.error };
-        }
-        const generated = JSON.parse(generatedFile.text());
-        const colors = generated.colors[generated.mode];
+        const colors = theme.colors;
         return { text: colors.on_surface, accent: colors.primary, warning: colors.error };
     }
-    readonly property string wallpaper: theme.wallpaper ?? ""
+    readonly property string wallpaper: selection.wallpaper ?? theme.wallpapers?.[0] ?? ""
 
     readonly property color body: "black"
     readonly property color text: palette.text
@@ -33,24 +29,8 @@ Singleton {
     readonly property string font: "Noto Sans"
 
     FileView {
-        id: current
-        path: root.home + "/.local/state/theme"
-        blockLoading: true
-        watchChanges: true
-        onFileChanged: reload()
-    }
-
-    FileView {
-        id: themeFile
-        path: root.folder + "/theme.json"
-        blockLoading: true
-        watchChanges: true
-        onFileChanged: reload()
-    }
-
-    FileView {
-        id: paletteFile
-        path: root.folder + "/dms.json"
+        id: currentFile
+        path: root.runtime + "/current.json"
         blockLoading: true
         watchChanges: true
         printErrors: false
@@ -58,8 +38,8 @@ Singleton {
     }
 
     FileView {
-        id: generatedFile
-        path: root.home + "/.cache/DankMaterialShell/dms-colors.json"
+        id: themeFile
+        path: root.folder + "/theme.json"
         blockLoading: true
         watchChanges: true
         onFileChanged: reload()

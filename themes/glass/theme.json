@@ -1,0 +1,64 @@
+{
+  "name": "Glass",
+  "variant": "dark",
+  "wallpapers": [
+    "/home/maksibon/wallpapers/wallhaven-k82d26.jpg",
+    "/home/maksibon/wallpapers/wallhaven-9oke91.png"
+  ],
+  "glass": {
+    "opacity": 0.72,
+    "blur_passes": 3,
+    "blur_offset": 4.0,
+    "blur_noise": 0.03,
+    "blur_saturation": 2.1
+  },
+  "colors": {
+    "background": "#1d1e1e",
+    "surface": "#212221",
+    "surface_dim": "#191b1a",
+    "surface_bright": "#2e2f2f",
+    "surface_container": "#272827",
+    "surface_container_high": "#2d2e2e",
+    "surface_container_highest": "#343535",
+    "on_surface": "#d6cbb8",
+    "on_surface_variant": "#a89a88",
+    "outline": "#3a3a3a",
+    "outline_variant": "#383938",
+    "primary": "#8fa8a0",
+    "on_primary": "#151c1a",
+    "primary_container": "#2a3633",
+    "primary_fixed": "#a1b8b1",
+    "secondary": "#a3b1ac",
+    "secondary_container": "#2f3b37",
+    "tertiary": "#5fae9c",
+    "tertiary_fixed": "#c3dad3",
+    "error": "#cf7563",
+    "warning": "#d2b56e",
+    "info": "#6fa6ae"
+  },
+  "terminal": {
+    "background": "#222323",
+    "foreground": "#d6cbb8",
+    "cursor": "#8fa8a0",
+    "selection_background": "#2a3633",
+    "selection_foreground": "#d6cbb8",
+    "palette": [
+      "#1c1c1c",
+      "#cf7563",
+      "#8fbc9c",
+      "#d2b56e",
+      "#6fa6ae",
+      "#bf8f98",
+      "#5fae9c",
+      "#a89a88",
+      "#5c6b67",
+      "#dd8d7d",
+      "#a3cdb0",
+      "#dcc48a",
+      "#8bb9c0",
+      "#cfa7ae",
+      "#7fc2b2",
+      "#d6cbb8"
+    ]
+  }
+}
