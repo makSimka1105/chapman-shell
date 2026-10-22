@@ -44,11 +44,6 @@ Item {
         onClicked: root.picker = ""
     }
 
-    SystemClock {
-        id: clock
-        precision: SystemClock.Minutes
-    }
-
     Column {
         id: leftColumn
         anchors.left: parent.left
@@ -56,24 +51,8 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         spacing: 12
 
-        Row {
-            spacing: 8
-
-            Rectangle {
-                anchors.verticalCenter: parent.verticalCenter
-                width: 6
-                height: 6
-                radius: 3
-                color: Theme.accent
-            }
-
-            Label {
-                width: 150
-                text: root.app?.name ?? Niri.focusedWindow?.app_id ?? "Desktop"
-                elide: Text.ElideRight
-                font.pixelSize: 15
-                font.weight: Font.Medium
-            }
+        HomeFocus {
+            title: root.app?.name ?? Niri.focusedWindow?.app_id ?? "Desktop"
         }
 
         Workspaces {
@@ -83,73 +62,8 @@ Item {
             activeHeight: 24
         }
 
-        Item {
-            width: usageColumn.width
-            height: usageColumn.height
-
-            Column {
-                id: usageColumn
-                spacing: 7
-
-                Repeater {
-                    model: [
-                        { label: "5h", value: Usage.fiveHour, text: Math.round(Usage.fiveHour * 100) + "%" },
-                        { label: "7d", value: Usage.sevenDay, text: Math.round(Usage.sevenDay * 100) + "%" },
-                        { label: "OR", value: Usage.openRouterUsed, text: "$" + Usage.openRouterSpend.toFixed(2) }
-                    ]
-
-                    Row {
-                        required property var modelData
-
-                        spacing: 8
-
-                        Label {
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 22
-                            text: parent.modelData.label
-                            color: Theme.textDim
-                            font.pixelSize: 12
-                            font.weight: Font.DemiBold
-                        }
-
-                        Rectangle {
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 110
-                            height: 6
-                            radius: 3
-                            color: Theme.faint
-
-                            Rectangle {
-                                width: Usage.known ? Math.max(parent.height, parent.width * Math.min(1, parent.parent.modelData.value)) : 0
-                                height: parent.height
-                                radius: 3
-                                color: parent.parent.modelData.value > 0.85 ? Theme.warning : Theme.accent
-
-                                Behavior on width {
-                                    NumberAnimation {
-                                        duration: 400
-                                        easing.type: Easing.OutCubic
-                                    }
-                                }
-                            }
-                        }
-
-                        Label {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: Usage.known ? parent.modelData.text : "-"
-                            font.pixelSize: 12
-                            font.weight: Font.DemiBold
-                        }
-                    }
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                anchors.margins: -8
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.pageRequested("usage")
-            }
+        HomeUsage {
+            onClicked: root.pageRequested("usage")
         }
     }
 
@@ -171,28 +85,10 @@ Item {
         }
     }
 
-    Column {
-        id: clockColumn
+    HomeClock {
         anchors.right: parent.horizontalCenter
         anchors.rightMargin: root.gutter / 2
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 12
-
-        Column {
-            spacing: 0
-
-            Label {
-                text: Qt.formatTime(clock.date, "HH:mm")
-                font.pixelSize: 40
-                font.weight: Font.DemiBold
-            }
-
-            Label {
-                text: clock.date.toLocaleDateString(Qt.locale("en_US"), "dddd, MMMM d")
-                color: Theme.textDim
-                font.pixelSize: 14
-            }
-        }
     }
 
     Calendar {
@@ -212,90 +108,20 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 18
 
-            Item {
-                width: 124
-                height: wifiText.height
-
-                Column {
-                    id: wifiText
-                    spacing: 1
-
-                    Row {
-                        spacing: 6
-
-                        Glyph {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: Status.wifiNetwork !== null ? "󰤨" : "󰤭"
-                            color: Status.wifiNetwork !== null ? Theme.accent : Theme.textDim
-                            font.pixelSize: 15
-                        }
-
-                        Label {
-                            text: "Wi-Fi"
-                            color: Status.wifiNetwork !== null ? Theme.accent : Theme.textDim
-                            font.pixelSize: 14
-                            font.weight: Font.DemiBold
-                        }
-                    }
-
-                    Label {
-                        width: 124
-                        text: Status.wifiNetwork?.name ?? (Networking.wifiEnabled ? "Not connected" : "Off")
-                        color: Theme.textDim
-                        elide: Text.ElideRight
-                        font.pixelSize: 13
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    anchors.margins: -6
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.pageRequested("wifi")
-                }
+            HomeLink {
+                glyph: Status.wifiNetwork !== null ? "󰤨" : "󰤭"
+                title: "Wi-Fi"
+                caption: Status.wifiNetwork?.name ?? (Networking.wifiEnabled ? "Not connected" : "Off")
+                tint: Status.wifiNetwork !== null ? Theme.accent : Theme.textDim
+                onClicked: root.pageRequested("wifi")
             }
 
-            Item {
-                width: 124
-                height: bluetoothText.height
-
-                Column {
-                    id: bluetoothText
-                    spacing: 1
-
-                    Row {
-                        spacing: 6
-
-                        Glyph {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: root.bluetoothLinked ? "󰂱" : root.bluetoothOn ? "󰂯" : "󰂲"
-                            color: root.bluetoothOn ? Theme.accent : Theme.textDim
-                            font.pixelSize: 15
-                        }
-
-                        Label {
-                            text: "Bluetooth"
-                            color: root.bluetoothOn ? Theme.accent : Theme.textDim
-                            font.pixelSize: 14
-                            font.weight: Font.DemiBold
-                        }
-                    }
-
-                    Label {
-                        width: 124
-                        text: root.headset ? root.headset.name + (root.headset.batteryAvailable ? " " + Math.round(root.headset.battery * 100) + "%" : "") : root.bluetoothOn ? "No device" : "Off"
-                        color: Theme.textDim
-                        elide: Text.ElideRight
-                        font.pixelSize: 13
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    anchors.margins: -6
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.pageRequested("bluetooth")
-                }
+            HomeLink {
+                glyph: root.bluetoothLinked ? "󰂱" : root.bluetoothOn ? "󰂯" : "󰂲"
+                title: "Bluetooth"
+                caption: root.headset ? root.headset.name + (root.headset.batteryAvailable ? " " + Math.round(root.headset.battery * 100) + "%" : "") : root.bluetoothOn ? "No device" : "Off"
+                tint: root.bluetoothOn ? Theme.accent : Theme.textDim
+                onClicked: root.pageRequested("bluetooth")
             }
         }
 
@@ -307,181 +133,45 @@ Item {
                 columns: 2
                 spacing: 8
 
-                Rectangle {
-                    width: 58
-                    height: 46
-                    radius: 14
-                    color: Theme.card
-
-                    Column {
-                        anchors.centerIn: parent
-                        spacing: 2
-
-                        Glyph {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: "󰌌"
-                            color: false ? Theme.accent : Theme.textDim
-                            font.pixelSize: 18
-                        }
-
-                        Label {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: Niri.layoutCode
-                            color: false ? Theme.text : Theme.textDim
-                            font.pixelSize: 11
-                            font.weight: Font.DemiBold
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: root.picker = root.picker === "layout" ? "" : "layout"
-                    }
+                HomeTile {
+                    glyph: "󰌌"
+                    caption: Niri.layoutCode
+                    glyphColor: Theme.textDim
+                    captionColor: Theme.textDim
+                    onClicked: root.picker = root.picker === "layout" ? "" : "layout"
                 }
 
-                Rectangle {
-                    width: 58
-                    height: 46
-                    radius: 14
-                    color: Theme.card
-
-                    Column {
-                        anchors.centerIn: parent
-                        spacing: 2
-
-                        Glyph {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: Tiling.glyph
-                            color: Tiling.preset !== "none" ? Theme.accent : Theme.textDim
-                            font.pixelSize: 18
-                        }
-
-                        Label {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: root.tilingLabel
-                            color: Tiling.preset !== "none" ? Theme.text : Theme.textDim
-                            font.pixelSize: 11
-                            font.weight: Font.DemiBold
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: root.picker = root.picker === "tiling" ? "" : "tiling"
-                    }
+                HomeTile {
+                    glyph: Tiling.glyph
+                    caption: root.tilingLabel
+                    glyphColor: Tiling.preset !== "none" ? Theme.accent : Theme.textDim
+                    captionColor: Tiling.preset !== "none" ? Theme.text : Theme.textDim
+                    onClicked: root.picker = root.picker === "tiling" ? "" : "tiling"
                 }
 
-                Rectangle {
-                    width: 58
-                    height: 46
-                    radius: 14
-                    color: Theme.card
-
-                    Column {
-                        anchors.centerIn: parent
-                        spacing: 2
-
-                        Glyph {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: Notifications.dnd ? "󰂛" : "󰂚"
-                            color: Notifications.dnd ? Theme.accent : Theme.textDim
-                            font.pixelSize: 18
-                        }
-
-                        Label {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: "DND"
-                            color: Notifications.dnd ? Theme.text : Theme.textDim
-                            font.pixelSize: 11
-                            font.weight: Font.DemiBold
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: Notifications.dnd = !Notifications.dnd
-                    }
+                HomeTile {
+                    glyph: Notifications.dnd ? "󰂛" : "󰂚"
+                    caption: "DND"
+                    glyphColor: Notifications.dnd ? Theme.accent : Theme.textDim
+                    captionColor: Notifications.dnd ? Theme.text : Theme.textDim
+                    onClicked: Notifications.dnd = !Notifications.dnd
                 }
 
-                Rectangle {
-                    width: 58
-                    height: 46
-                    radius: 14
-                    color: Theme.card
-
-                    Column {
-                        anchors.centerIn: parent
-                        spacing: 2
-
-                        Glyph {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: "󰅶"
-                            color: KeepAwake.active ? Theme.accent : Theme.textDim
-                            font.pixelSize: 18
-                        }
-
-                        Label {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            text: "Awake"
-                            color: KeepAwake.active ? Theme.text : Theme.textDim
-                            font.pixelSize: 11
-                            font.weight: Font.DemiBold
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: KeepAwake.toggle()
-                    }
+                HomeTile {
+                    glyph: "󰅶"
+                    caption: "Awake"
+                    glyphColor: KeepAwake.active ? Theme.accent : Theme.textDim
+                    captionColor: KeepAwake.active ? Theme.text : Theme.textDim
+                    onClicked: KeepAwake.toggle()
                 }
             }
 
-            Item {
-                width: 124
-                height: notificationText.height
-
-                MouseArea {
-                    anchors.fill: parent
-                    anchors.margins: -6
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.pageRequested("notifications")
-                }
-
-                Column {
-                    id: notificationText
-                    width: 124
-                    spacing: 1
-
-                    Row {
-                        spacing: 6
-
-                        Glyph {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: root.notificationCount === 0 ? "󰂛" : "󰂚"
-                            color: root.notificationCount === 0 ? Theme.textDim : Theme.accent
-                            font.pixelSize: 15
-                        }
-
-                        Label {
-                            text: root.notificationCount === 0 ? "Quiet" : root.notificationCount + " new"
-                            color: root.notificationCount === 0 ? Theme.textDim : Theme.accent
-                            font.pixelSize: 14
-                            font.weight: Font.DemiBold
-                        }
-                    }
-
-                    Label {
-                        width: 124
-                        text: root.notificationCount === 0 ? "No notifications" : root.notificationApps
-                        color: Theme.textDim
-                        elide: Text.ElideRight
-                        font.pixelSize: 13
-                    }
-                }
+            HomeLink {
+                glyph: root.notificationCount === 0 ? "󰂛" : "󰂚"
+                title: root.notificationCount === 0 ? "Quiet" : root.notificationCount + " new"
+                caption: root.notificationCount === 0 ? "No notifications" : root.notificationApps
+                tint: root.notificationCount === 0 ? Theme.textDim : Theme.accent
+                onClicked: root.pageRequested("notifications")
             }
         }
     }

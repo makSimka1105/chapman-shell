@@ -3,7 +3,6 @@ import Quickshell
 import Quickshell.Wayland
 import qs.services
 import qs.widgets
-import "../../services/Calc.js" as Calc
 
 PanelWindow {
     id: root
@@ -12,7 +11,7 @@ PanelWindow {
     property bool revealed
     property int selected: 0
     property int armed: -1
-    readonly property var results: build(field.text)
+    readonly property var results: search.build(field.text)
     readonly property bool showPreview: results.length > 0
     readonly property real compactWidth: 680
     readonly property real previewWidth: 360
@@ -24,45 +23,15 @@ PanelWindow {
     readonly property real radius: 26
     readonly property real gap: 12
 
+    SpotlightSearch {
+        id: search
+    }
+
     function toggle(query) {
         if (opened)
             close();
         else
             open(query);
-    }
-
-    function group(title, items) {
-        return items.length > 0 ? [{ header: true, title }, ...items] : [];
-    }
-
-    function calculation(query) {
-        const value = Calc.evaluate(query.replace(/^=/, ""));
-        if (value === null)
-            return [];
-        const text = Calc.format(value);
-        return [{
-            kind: "calc",
-            title: text,
-            subtitle: query.replace(/^=/, "") + " =",
-            glyph: "\uf1ec",
-            run: () => Spawn.run(["wl-copy", text])
-        }];
-    }
-
-    function build(text) {
-        const query = text.trim();
-        if (query.startsWith("#"))
-            return group("Themes", Themes.search(query.slice(1)));
-        if (query.startsWith(":"))
-            return group("Clipboard", Clipboard.search(query.slice(1)));
-        if (query === "")
-            return [];
-        return [
-            ...group("Calculator", calculation(query)),
-            ...group("Actions", Actions.search(query)),
-            ...group("Applications", Apps.search(query)),
-            ...group("Files", Files.items)
-        ];
     }
 
     function open(query) {
@@ -165,7 +134,7 @@ PanelWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         y: parent.height * 0.22
         width: root.showPreview ? root.compactWidth + root.previewWidth : root.compactWidth
-        height: pill.height + root.gap + slab.height
+        height: field.height + root.gap + slab.height
         opacity: Math.min(1, openT * 2.2)
         scale: 0.9 + 0.1 * openT
         transformOrigin: Item.Top
@@ -186,98 +155,27 @@ PanelWindow {
             }
         }
 
-        Item {
-            id: pill
+        SpotlightField {
+            id: field
 
             width: parent.width
             height: root.fieldHeight
-            scale: pillPress.pressed ? 0.98 : 1
-
-            Behavior on scale {
-                NumberAnimation {
-                    duration: 230
-                    easing.type: Easing.OutBack
-                    easing.overshoot: 3
-                }
+            glass: glass
+            onTextChanged: {
+                root.selected = 0;
+                root.armed = -1;
+                Files.search(/^[@#=:]/.test(text.trim()) ? "" : text);
             }
-
-            Glass {
-                anchors.fill: parent
-                context: glass
-                radius: height / 2
-                thickness: 18
-                shadow: 0.35
-            }
-
-            Contour {
-                anchors.fill: parent
-                radius: height / 2
-                lit: pillHover.hovered
-                at: pillHover.point.position
-            }
-
-            HoverHandler {
-                id: pillHover
-            }
-
-            MouseArea {
-                id: pillPress
-                anchors.fill: parent
-                onClicked: field.forceActiveFocus()
-            }
-
-            Label {
-                id: lens
-                anchors.left: parent.left
-                anchors.leftMargin: 24
-                anchors.verticalCenter: parent.verticalCenter
-                text: "󰍉"
-                color: Theme.textDim
-                font.family: "JetBrainsMono Nerd Font"
-                font.pixelSize: 24
-            }
-
-            TextInput {
-                id: field
-                anchors.left: lens.right
-                anchors.leftMargin: 14
-                anchors.right: parent.right
-                anchors.rightMargin: 24
-                anchors.verticalCenter: parent.verticalCenter
-                color: Theme.text
-                selectionColor: Qt.alpha(Theme.accent, 0.4)
-                font.family: Theme.font
-                font.pixelSize: 22
-                renderType: Text.NativeRendering
-                clip: true
-                onTextChanged: {
-                    root.selected = 0;
-                    root.armed = -1;
-                    Files.search(/^[@#=:]/.test(text.trim()) ? "" : text);
-                }
-
-                Keys.onEscapePressed: root.close()
-                Keys.onUpPressed: root.move(-1)
-                Keys.onDownPressed: root.move(1)
-                Keys.onTabPressed: root.move(1)
-                Keys.onBacktabPressed: root.move(-1)
-                Keys.onReturnPressed: root.activate(root.selected)
-                Keys.onEnterPressed: root.activate(root.selected)
-
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    visible: field.text === ""
-                    text: "Spotlight Search"
-                    color: Theme.textDim
-                    font.pixelSize: 22
-                }
-            }
+            onEscaped: root.close()
+            onMoved: step => root.move(step)
+            onSubmitted: root.activate(root.selected)
         }
+
 
         Item {
             id: slab
 
-            y: pill.height + root.gap
+            y: field.height + root.gap
             width: parent.width
             height: root.showPreview ? Math.max(list.height, root.minContentHeight) + 18 : 0
             visible: height > 1
@@ -290,23 +188,12 @@ PanelWindow {
                 }
             }
 
-            Glass {
+            GlassSurface {
                 anchors.fill: parent
                 context: glass
-                radius: root.radius
+                cornerRadius: root.radius
                 thickness: 26
                 shadow: 0.6
-            }
-
-            Contour {
-                anchors.fill: parent
-                radius: root.radius
-                lit: slabHover.hovered
-                at: slabHover.point.position
-            }
-
-            HoverHandler {
-                id: slabHover
             }
 
             MouseArea {
@@ -317,7 +204,7 @@ PanelWindow {
                 anchors.fill: parent
                 clip: true
 
-                ListView {
+                SpotlightResults {
                     id: list
                     y: 9
                     x: 9
@@ -325,131 +212,16 @@ PanelWindow {
                     height: Math.min(contentHeight, root.visibleRows * root.rowHeight)
                     model: root.results
                     currentIndex: root.selected
-                    boundsBehavior: Flickable.StopAtBounds
-                    clip: true
-                    highlightFollowsCurrentItem: false
-
-                    highlight: Rectangle {
-                        y: root.rowY(root.selected)
-                        width: list.width
-                        height: root.rowHeight
-                        radius: 14
-                        color: Qt.alpha(root.armed === root.selected ? Theme.warning : Theme.accent, 0.22)
-
-                        Behavior on y {
-                            NumberAnimation {
-                                duration: 260
-                                easing.type: Easing.OutBack
-                                easing.overshoot: 1.4
-                            }
-                        }
-                    }
-
-                    delegate: Item {
-                        id: row
-
-                        required property var modelData
-                        required property int index
-                        readonly property bool isArmed: index === root.armed
-                        property real arrival: 1
-
-                        width: list.width
-                        height: modelData.header ? root.headerHeight : root.rowHeight
-                        opacity: Math.min(1, arrival * 1.6)
-                        transform: Translate {
-                            y: (1 - row.arrival) * 16
-                        }
-                        Component.onCompleted: {
-                            if (slab.height < root.rowHeight) {
-                                arrival = 0;
-                                arrive.start();
-                            }
-                        }
-
-                        SequentialAnimation {
-                            id: arrive
-                            PauseAnimation {
-                                duration: Math.min(220, row.index * 40)
-                            }
-                            NumberAnimation {
-                                target: row
-                                property: "arrival"
-                                to: 1
-                                duration: 460
-                                easing.type: Easing.OutBack
-                                easing.overshoot: 1.8
-                            }
-                        }
-
-                        Label {
-                            anchors.left: parent.left
-                            anchors.leftMargin: 14
-                            anchors.bottom: parent.bottom
-                            anchors.bottomMargin: 6
-                            visible: row.modelData.header === true
-                            text: row.modelData.title
-                            color: Theme.textDim
-                            font.pixelSize: 12
-                            font.weight: Font.DemiBold
-                        }
-
-                        Item {
-                            anchors.fill: parent
-                            visible: !row.modelData.header
-                            scale: rowPress.pressed ? 0.97 : 1
-
-                            Behavior on scale {
-                                NumberAnimation {
-                                    duration: 230
-                                    easing.type: Easing.OutBack
-                                    easing.overshoot: 3
-                                }
-                            }
-
-                            ResultIcon {
-                                id: icon
-                                anchors.left: parent.left
-                                anchors.leftMargin: 12
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 32
-                                height: 32
-                                item: row.modelData
-                            }
-
-                            Label {
-                                id: name
-                                anchors.left: icon.right
-                                anchors.leftMargin: 14
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: Math.min(implicitWidth, parent.width * 0.5)
-                                text: row.modelData.title
-                                elide: Text.ElideRight
-                                font.pixelSize: 16
-                                font.weight: Font.Medium
-                            }
-
-                            Label {
-                                anchors.left: name.right
-                                anchors.leftMargin: 10
-                                anchors.right: parent.right
-                                anchors.rightMargin: 14
-                                anchors.baseline: name.baseline
-                                text: row.isArmed ? "Press Enter again to confirm" : row.modelData.subtitle ?? ""
-                                color: row.isArmed ? Theme.warning : Theme.textDim
-                                elide: Text.ElideRight
-                                font.pixelSize: 13
-                            }
-
-                            MouseArea {
-                                id: rowPress
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                onEntered: root.selected = row.index
-                                onClicked: root.activate(row.index)
-                            }
-                        }
-                    }
+                    rowHeight: root.rowHeight
+                    headerHeight: root.headerHeight
+                    highlightY: root.rowY(root.selected)
+                    highlightArmed: root.armed === root.selected
+                    armed: root.armed
+                    collapsed: slab.height < root.rowHeight
+                    onHovered: index => root.selected = index
+                    onClicked: index => root.activate(index)
                 }
+
 
                 Rectangle {
                     anchors.top: parent.top
