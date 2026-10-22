@@ -1,0 +1,34 @@
+binds {
+    Super+S hotkey-overlay-title="Spotlight" { spawn "qs" "-p" "/home/maksibon/.config/chapman-shell/shell" "ipc" "call" "spotlight" "toggle"; }
+    Alt+V hotkey-overlay-title="Clipboard history" { spawn "qs" "-p" "/home/maksibon/.config/chapman-shell/shell" "ipc" "call" "spotlight" "toggleQuery" ":"; }
+    Mod+Shift+T hotkey-overlay-title="Themes" { spawn "qs" "-p" "/home/maksibon/.config/chapman-shell/shell" "ipc" "call" "spotlight" "toggleQuery" "#"; }
+    Super+P hotkey-overlay-title="Power menu" { spawn "qs" "-p" "/home/maksibon/.config/chapman-shell/shell" "ipc" "call" "power" "toggle"; }
+    Super+Shift+P hotkey-overlay-title="Power menu" { spawn "qs" "-p" "/home/maksibon/.config/chapman-shell/shell" "ipc" "call" "power" "toggle"; }
+    XF86MonBrightnessUp allow-when-locked=true { spawn-sh "brightnessctl --class=backlight set +10% && qs -p /home/maksibon/.config/chapman-shell/shell ipc call osd brightness"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn-sh "brightnessctl --class=backlight set 10%- && qs -p /home/maksibon/.config/chapman-shell/shell ipc call osd brightness"; }
+    Super+Shift+S hotkey-overlay-title="Screenshot: Interactive" { screenshot; }
+}
+
+layout {
+    background-color "transparent"
+
+    focus-ring {
+        active-color   "#8fa8a0"
+        inactive-color "#3a3a3a"
+        urgent-color   "#cf7563"
+    }
+
+    shadow {
+        color "#00000070"
+    }
+
+    tab-indicator {
+        active-color   "#8fa8a0"
+        inactive-color "#3a3a3a"
+        urgent-color   "#cf7563"
+    }
+
+    insert-hint {
+        color "#8fa8a080"
+    }
+}
