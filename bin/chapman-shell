@@ -23,6 +23,7 @@ CURRENT = STATE / "current.json"
 COLORS = STATE / "colors.json"
 DANK_SYNC = Path.home() / ".local/bin/dank-themes-sync"
 UNIT = "chapman-shell.service"
+GTK4_CSS = Path.home() / ".config/gtk-4.0/gtk.css"
 DEFAULT_THEME = "glass"
 PLACEHOLDER = re.compile(r"\{\{([\w.]+)\}\}")
 SWATCHES = ["primary", "surface", "on_surface", "secondary", "tertiary", "error"]
@@ -88,6 +89,8 @@ def shell_active():
 def reload_apps():
     subprocess.run(["pkill", "-USR2", "-f", "^ghostty( |$)"], capture_output=True, check=False)
     subprocess.run(["niri", "msg", "action", "load-config-file"], capture_output=True, check=False)
+    if GTK4_CSS.is_file():
+        GTK4_CSS.write_text(GTK4_CSS.read_text())
     if DANK_SYNC.exists():
         subprocess.run([DANK_SYNC], env={**os.environ, "DANK_COLORS": str(COLORS)}, capture_output=True, check=False)
 
