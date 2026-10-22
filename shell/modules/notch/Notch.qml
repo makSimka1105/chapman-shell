@@ -1,9 +1,6 @@
 import QtQuick
 import qs.core
 import qs.services
-import qs.modules.control
-import qs.modules.home
-import qs.modules.themes
 
 Item {
     id: root
@@ -11,7 +8,7 @@ Item {
     required property string output
     property string state: "rest"
     property bool pinned
-    readonly property string mode: state === "control" || state === "themes" ? state : Notifications.current ? "notification" : Osd.active && state === "rest" ? "osd" : state
+    readonly property string mode: state === "control" || state === "themes" || state === "search" ? state : Notifications.current ? "notification" : Osd.active && state === "rest" ? "osd" : state
 
     readonly property size restSize: Qt.size(340, 40)
     readonly property size homeSize: Qt.size(1400, 240)
@@ -30,9 +27,10 @@ Item {
             notification: 30,
             osd: 24,
             control: 32,
-            themes: 36
+            themes: 36,
+            search: 36
         })
-    readonly property size goal: mode === "control" ? Qt.size(control.implicitWidth, control.implicitHeight) : mode === "themes" ? Qt.size(themes.implicitWidth, themes.implicitHeight) : sizes[mode]
+    readonly property size goal: mode === "control" ? Qt.size(content.control.implicitWidth, content.control.implicitHeight) : mode === "themes" ? Qt.size(content.themes.implicitWidth, content.themes.implicitHeight) : mode === "search" ? Qt.size(content.searchView.implicitWidth, content.searchView.implicitHeight) : sizes[mode]
 
     readonly property int morphDuration: 300
     property real radius: radii[mode]
@@ -42,16 +40,27 @@ Item {
 
     function openControl(page) {
         closeDelay.stop();
-        control.show(page);
+        content.control.show(page);
         state = "control";
-        control.forceActiveFocus();
+        content.control.forceActiveFocus();
     }
 
     function openThemes() {
         closeDelay.stop();
-        themes.open();
+        content.themes.open();
         pinned = true;
         state = "themes";
+    }
+
+    function toggleSearch(query) {
+        if (state === "search") {
+            close();
+            return;
+        }
+        closeDelay.stop();
+        pinned = true;
+        state = "search";
+        content.searchView.open(query);
     }
 
     function close() {
@@ -127,8 +136,8 @@ Item {
 
     Timer {
         id: closeDelay
-        interval: root.state === "control" || root.state === "themes" ? 700 : 280
-        onTriggered: if (!root.pinned && !control.typing) root.state = "rest"
+        interval: root.state === "control" || root.state === "themes" || root.state === "search" ? 700 : 280
+        onTriggered: if (!root.pinned && !content.control.typing) root.state = "rest"
     }
 
     HoverHandler {
@@ -166,105 +175,11 @@ Item {
         targetSwell: root.swell
     }
 
-    Item {
+    NotchContent {
+        id: content
+        notch: root
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width * root.squash * visual.swell
         height: parent.height * visual.swell
-        clip: true
-
-        RestView {
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: root.restSize.width
-            height: root.restSize.height
-            output: root.output
-            opacity: root.mode === "rest" ? 1 : 0
-            visible: opacity > 0
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: Tokens.durationHover
-                }
-            }
-        }
-
-        NotificationView {
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: root.notificationSize.width
-            height: root.notificationSize.height
-            opacity: root.mode === "notification" ? 1 : 0
-            visible: opacity > 0
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: Tokens.durationNormal
-                    easing.type: Easing.InCubic
-                }
-            }
-        }
-
-        OsdView {
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: root.osdSize.width
-            height: root.osdSize.height
-            opacity: root.mode === "osd" ? 1 : 0
-            visible: opacity > 0
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: Tokens.durationQuick
-                }
-            }
-        }
-
-        HomeView {
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: root.homeSize.width
-            height: root.homeSize.height
-            output: root.output
-            opacity: root.mode === "home" ? 1 : 0
-            visible: opacity > 0
-            onPageRequested: page => root.openControl(page)
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: Tokens.durationNormal
-                    easing.type: Easing.InCubic
-                }
-            }
-        }
-
-        ControlView {
-            id: control
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: implicitWidth
-            height: implicitHeight
-            opacity: root.mode === "control" ? 1 : 0
-            visible: opacity > 0
-            onClosed: root.state = "home"
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: Tokens.durationNormal
-                    easing.type: Easing.InCubic
-                }
-            }
-        }
-
-        ThemesView {
-            id: themes
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: implicitWidth
-            height: implicitHeight
-            opacity: root.mode === "themes" ? 1 : 0
-            visible: opacity > 0
-            onClosed: root.close()
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: Tokens.durationNormal
-                    easing.type: Easing.InCubic
-                }
-            }
-        }
     }
 }

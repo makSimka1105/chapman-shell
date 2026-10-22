@@ -7,10 +7,14 @@ import qs.services
 import qs.modules.lock
 import qs.modules.notch
 import qs.modules.power
-import qs.modules.spotlight
 import qs.modules.wallpaper
 
 ShellRoot {
+    function toggleSearch(query) {
+        const window = notchWindows.instances.find(candidate => candidate.modelData.name === Niri.focusedOutput) ?? notchWindows.instances[0];
+        window.island.toggleSearch(query);
+    }
+
     Component.onCompleted: Clipboard.refresh()
 
     Variants {
@@ -23,19 +27,15 @@ ShellRoot {
         }
     }
 
-    Spotlight {
-        id: spotlight
-    }
-
     IpcHandler {
         target: "spotlight"
 
         function toggle(): void {
-            spotlight.toggle("");
+            toggleSearch("");
         }
 
         function toggleQuery(query: string): void {
-            spotlight.toggle(query);
+            toggleSearch(query);
         }
     }
 
@@ -84,6 +84,7 @@ ShellRoot {
     }
 
     Variants {
+        id: notchWindows
         model: Quickshell.screens
 
         PanelWindow {
@@ -93,6 +94,7 @@ ShellRoot {
             readonly property int shadowRoom: 48
             readonly property int niriTopSpace: 26
             readonly property int windowGap: 8
+            readonly property Item island: notch
 
             screen: modelData
             anchors.top: true
@@ -102,7 +104,7 @@ ShellRoot {
             color: "transparent"
             WlrLayershell.layer: WlrLayer.Top
             WlrLayershell.namespace: "notch"
-            WlrLayershell.keyboardFocus: notch.state === "control" || notch.state === "themes" ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+            WlrLayershell.keyboardFocus: notch.state === "search" ? WlrKeyboardFocus.Exclusive : notch.state === "control" || notch.state === "themes" ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
             mask: Region {
                 item: notch
             }

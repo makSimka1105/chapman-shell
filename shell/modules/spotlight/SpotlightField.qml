@@ -6,7 +6,6 @@ import qs.widgets
 FocusScope {
     id: root
 
-    required property GlassContext glass
     property alias text: input.text
 
     signal escaped
@@ -23,12 +22,10 @@ FocusScope {
         }
     }
 
-    GlassSurface {
+    Rectangle {
         anchors.fill: parent
-        context: root.glass
-        cornerRadius: height / 2
-        thickness: 18
-        shadow: 0.35
+        radius: height / 2
+        color: Qt.alpha(Theme.text, 0.08)
     }
 
     MouseArea {
