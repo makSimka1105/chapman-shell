@@ -8,8 +8,10 @@ Item {
     id: root
 
     required property real radius
-    required property real flare
+    required property real baseFlare
+    readonly property real flare: baseFlare * (1 - detach)
     required property real squash
+    required property real detach
     required property real targetSwell
     property real swell: targetSwell
 
@@ -41,8 +43,8 @@ Item {
         id: body
         anchors.fill: parent
         color: Theme.body
-        topLeftRadius: 0
-        topRightRadius: 0
+        topLeftRadius: root.radius * root.detach
+        topRightRadius: root.radius * root.detach
         bottomLeftRadius: root.radius
         bottomRightRadius: root.radius
     }
@@ -51,6 +53,7 @@ Item {
         x: -root.flare
         width: root.flare
         height: root.flare
+        visible: root.flare > 0.5
         preferredRendererType: Shape.CurveRenderer
 
         ShapePath {
@@ -74,6 +77,7 @@ Item {
         x: root.width
         width: root.flare
         height: root.flare
+        visible: root.flare > 0.5
         preferredRendererType: Shape.CurveRenderer
 
         ShapePath {

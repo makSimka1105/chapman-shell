@@ -35,6 +35,8 @@ Item {
     readonly property int morphDuration: 300
     property real radius: radii[mode]
     property real squash: 1
+    property real detach: state === "search" ? 1 : 0
+    readonly property real detachOffset: Math.max(0, detach) * Tokens.islandDetachGap
     readonly property real flare: mode === "rest" ? 9 : mode === "home" ? 26 : 18
     readonly property real swell: press.pressed ? 1 - 4 / Math.max(goal.width, goal.height) : hover.hovered ? 1 + 6 / Math.max(goal.width, goal.height) : 1
 
@@ -46,6 +48,10 @@ Item {
     }
 
     function openThemes() {
+        if (state === "themes") {
+            close();
+            return;
+        }
         closeDelay.stop();
         content.themes.open();
         pinned = true;
@@ -85,6 +91,14 @@ Item {
             duration: root.morphDuration
             easing.type: Easing.OutBack
             easing.overshoot: Tokens.overshootMild
+        }
+    }
+
+    Behavior on detach {
+        NumberAnimation {
+            duration: Tokens.durationMove
+            easing.type: Easing.OutBack
+            easing.overshoot: Tokens.overshootSoft
         }
     }
 
@@ -170,7 +184,8 @@ Item {
         id: visual
         anchors.fill: parent
         radius: root.radius
-        flare: root.flare
+        baseFlare: root.flare
+        detach: Math.min(1, Math.max(0, root.detach))
         squash: root.squash
         targetSwell: root.swell
     }

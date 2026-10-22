@@ -63,6 +63,7 @@ Singleton {
     readonly property int durationReveal: 520
     readonly property int durationRing: 900
 
+    readonly property real islandDetachGap: 12
     readonly property real overshootMild: 1
     readonly property real overshootSoft: 1.2
     readonly property real overshootMedium: 1.4

@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import qs.core
 import qs.services
 import qs.modules.lock
 import qs.modules.notch
@@ -99,7 +100,7 @@ ShellRoot {
             screen: modelData
             anchors.top: true
             implicitWidth: notch.homeSize.width + shadowRoom * 2
-            implicitHeight: notch.maxHeight + shadowRoom
+            implicitHeight: notch.maxHeight + shadowRoom + Tokens.islandDetachGap
             exclusiveZone: notch.restSize.height - window.niriTopSpace + window.windowGap
             color: "transparent"
             WlrLayershell.layer: WlrLayer.Top
@@ -113,6 +114,7 @@ ShellRoot {
                 id: notch
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
+                anchors.topMargin: notch.detachOffset
                 output: window.modelData.name
             }
 
