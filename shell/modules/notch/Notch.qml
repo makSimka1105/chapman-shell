@@ -3,6 +3,7 @@ import qs.core
 import qs.services
 import qs.modules.control
 import qs.modules.home
+import qs.modules.themes
 
 Item {
     id: root
@@ -10,7 +11,7 @@ Item {
     required property string output
     property string state: "rest"
     property bool pinned
-    readonly property string mode: state === "control" ? "control" : Notifications.current ? "notification" : Osd.active && state === "rest" ? "osd" : state
+    readonly property string mode: state === "control" || state === "themes" ? state : Notifications.current ? "notification" : Osd.active && state === "rest" ? "osd" : state
 
     readonly property size restSize: Qt.size(340, 40)
     readonly property size homeSize: Qt.size(1400, 240)
@@ -28,9 +29,10 @@ Item {
             home: 36,
             notification: 30,
             osd: 24,
-            control: 32
+            control: 32,
+            themes: 36
         })
-    readonly property size goal: mode === "control" ? Qt.size(control.implicitWidth, control.implicitHeight) : sizes[mode]
+    readonly property size goal: mode === "control" ? Qt.size(control.implicitWidth, control.implicitHeight) : mode === "themes" ? Qt.size(themes.implicitWidth, themes.implicitHeight) : sizes[mode]
 
     readonly property int morphDuration: 300
     property real radius: radii[mode]
@@ -43,6 +45,13 @@ Item {
         control.show(page);
         state = "control";
         control.forceActiveFocus();
+    }
+
+    function openThemes() {
+        closeDelay.stop();
+        themes.open();
+        pinned = true;
+        state = "themes";
     }
 
     function close() {
@@ -118,7 +127,7 @@ Item {
 
     Timer {
         id: closeDelay
-        interval: root.state === "control" ? 700 : 280
+        interval: root.state === "control" || root.state === "themes" ? 700 : 280
         onTriggered: if (!root.pinned && !control.typing) root.state = "rest"
     }
 
@@ -232,6 +241,23 @@ Item {
             opacity: root.mode === "control" ? 1 : 0
             visible: opacity > 0
             onClosed: root.state = "home"
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: Tokens.durationNormal
+                    easing.type: Easing.InCubic
+                }
+            }
+        }
+
+        ThemesView {
+            id: themes
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: implicitWidth
+            height: implicitHeight
+            opacity: root.mode === "themes" ? 1 : 0
+            visible: opacity > 0
+            onClosed: root.close()
 
             Behavior on opacity {
                 NumberAnimation {

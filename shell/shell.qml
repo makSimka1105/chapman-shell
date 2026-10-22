@@ -102,7 +102,7 @@ ShellRoot {
             color: "transparent"
             WlrLayershell.layer: WlrLayer.Top
             WlrLayershell.namespace: "notch"
-            WlrLayershell.keyboardFocus: notch.state === "control" ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+            WlrLayershell.keyboardFocus: notch.state === "control" || notch.state === "themes" ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
             mask: Region {
                 item: notch
             }
@@ -129,6 +129,10 @@ ShellRoot {
 
                 function control(page: string): void {
                     notch.openControl(page || "usage");
+                }
+
+                function themes(): void {
+                    notch.openThemes();
                 }
 
                 function state(): string {

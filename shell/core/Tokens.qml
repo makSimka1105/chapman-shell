@@ -71,4 +71,11 @@ Singleton {
     readonly property real listRowHeight: 42
     readonly property real pageHeaderHeight: 44
     readonly property real trackHeight: 8
+    readonly property real themesWidth: 1000
+    readonly property real themesHeight: 290
+    readonly property real themeCardWidth: 200
+    readonly property real themeCardHeight: 96
+    readonly property real themeDot: 18
+    readonly property real wallpaperThumbWidth: 192
+    readonly property real wallpaperThumbHeight: 108
 }

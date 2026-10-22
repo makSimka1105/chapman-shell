@@ -1,7 +1,7 @@
 binds {
     Super+S hotkey-overlay-title="Spotlight" { spawn "qs" "-p" "/home/maksibon/.config/chapman-shell/shell" "ipc" "call" "spotlight" "toggle"; }
     Alt+V hotkey-overlay-title="Clipboard history" { spawn "qs" "-p" "/home/maksibon/.config/chapman-shell/shell" "ipc" "call" "spotlight" "toggleQuery" ":"; }
-    Super+Shift+T hotkey-overlay-title="Themes" { spawn "qs" "-p" "/home/maksibon/.config/chapman-shell/shell" "ipc" "call" "spotlight" "toggleQuery" "#"; }
+    Super+Shift+T hotkey-overlay-title="Themes" { spawn "qs" "-p" "/home/maksibon/.config/chapman-shell/shell" "ipc" "call" "notch" "themes"; }
     Super+P hotkey-overlay-title="Power menu" { spawn "qs" "-p" "/home/maksibon/.config/chapman-shell/shell" "ipc" "call" "power" "toggle"; }
     Super+Shift+P hotkey-overlay-title="Power menu" { spawn "qs" "-p" "/home/maksibon/.config/chapman-shell/shell" "ipc" "call" "power" "toggle"; }
     XF86MonBrightnessUp allow-when-locked=true { spawn-sh "brightnessctl --class=backlight set +10% && qs -p /home/maksibon/.config/chapman-shell/shell ipc call osd brightness"; }

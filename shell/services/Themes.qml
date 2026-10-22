@@ -6,11 +6,19 @@ import Quickshell.Io
 Singleton {
     id: root
 
-    readonly property string bin: Quickshell.env("HOME") + "/.local/bin/theme"
+    readonly property string bin: Quickshell.shellDir + "/../bin/chapman-shell"
     property var themes: []
 
     function refresh() {
         listProcess.running = true;
+    }
+
+    function apply(id) {
+        Quickshell.execDetached([bin, "theme", id]);
+    }
+
+    function setWallpaper(path) {
+        Quickshell.execDetached([bin, "wallpaper", path]);
     }
 
     function search(query) {
@@ -20,15 +28,17 @@ Singleton {
             .map(theme => ({
                 kind: "theme",
                 title: theme.name,
-                subtitle: theme.current ? "Current" : theme.palette,
-                image: theme.wallpaper,
-                run: () => Spawn.run([bin, theme.name])
+                subtitle: theme.id === Theme.name ? "Current" : theme.id,
+                image: theme.wallpapers[0],
+                run: () => apply(theme.id)
             }));
     }
 
+    Component.onCompleted: refresh()
+
     Process {
         id: listProcess
-        command: [root.bin, "--json"]
+        command: [root.bin, "theme", "--json"]
         stdout: StdioCollector {
             onStreamFinished: root.themes = JSON.parse(text)
         }
