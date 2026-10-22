@@ -1,0 +1,126 @@
+#!/usr/bin/env python3
+import json
+import os
+import subprocess
+import urllib.error
+import urllib.request
+from datetime import datetime, timezone
+from pathlib import Path
+
+KEYS_DIR = Path.home() / ".secrets/llm"
+CLAUDE_CREDENTIALS = Path.home() / ".claude/.credentials.json"
+CLAUDE_URL = "https://claude.ai/api/oauth/usage"
+CLAUDE_CURL = "curl_chrome136"
+TIMEOUT = 10
+LITELLM_URL = "https://litellm.data-light.ru"
+OPENROUTER_URL = "https://openrouter.ai/api/v1"
+PROVIDERS = {
+    "course-1": "litellm",
+    "course-2": "litellm",
+    "openrouter": "openrouter",
+    "hackathon": "hackathon",
+}
+OUTPUT = Path(os.environ["XDG_RUNTIME_DIR"]) / "chapman-usage.json"
+
+
+def get_json(url, token):
+    request = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}", "Accept": "application/json"})
+    with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
+        return json.load(response)
+
+
+def window(entry):
+    if not entry:
+        return {"used_percent": None, "resets_at": None}
+    return {"used_percent": entry.get("utilization"), "resets_at": entry.get("resets_at")}
+
+
+def claude_card():
+    card = {"id": "claude", "name": "Claude", "five_hour": window(None), "weekly": window(None)}
+    try:
+        token = json.loads(CLAUDE_CREDENTIALS.read_text())["claudeAiOauth"]["accessToken"]
+        run = subprocess.run(
+            [CLAUDE_CURL, "-sS", "--max-time", str(TIMEOUT), "-H", "@-", "-H", "Accept: application/json", CLAUDE_URL],
+            input=f"Authorization: Bearer {token}\n",
+            capture_output=True,
+            text=True,
+            timeout=TIMEOUT + 5,
+        )
+        if run.returncode != 0:
+            return card | {"status": f"curl error {run.returncode}"}
+        reply = json.loads(run.stdout)
+        if "five_hour" not in reply:
+            return card | {"status": "unexpected reply"}
+        return card | {"five_hour": window(reply["five_hour"]), "weekly": window(reply.get("seven_day")), "status": "ok"}
+    except FileNotFoundError:
+        return card | {"status": "not logged in"}
+    except (KeyError, ValueError, subprocess.TimeoutExpired):
+        return card | {"status": "unexpected reply"}
+
+
+def codex_card():
+    return {
+        "id": "codex",
+        "name": "ChatGPT",
+        "five_hour": window(None),
+        "weekly": window(None),
+        "status": "not logged in",
+    }
+
+
+def litellm_usage(token):
+    try:
+        info = get_json(f"{LITELLM_URL}/key/info", token)["info"]
+    except urllib.error.HTTPError as error:
+        if error.code != 404:
+            raise
+        get_json(f"{LITELLM_URL}/v1/models", token)
+        return None, None
+    return info.get("spend"), info.get("max_budget")
+
+
+def openrouter_usage(token):
+    try:
+        info = get_json(f"{OPENROUTER_URL}/key", token)["data"]
+    except urllib.error.HTTPError as error:
+        if error.code != 404:
+            raise
+        info = get_json(f"{OPENROUTER_URL}/auth/key", token)["data"]
+    return info.get("usage"), info.get("limit")
+
+
+FETCHERS = {"litellm": litellm_usage, "openrouter": openrouter_usage}
+
+
+def key_card(path):
+    name = path.stem
+    provider = PROVIDERS.get(name, "unknown")
+    card = {"id": name, "name": name, "provider": provider, "spend": None, "limit": None, "currency": "USD"}
+    if provider == "unknown":
+        return card | {"status": "unknown provider"}
+    if provider not in FETCHERS:
+        return card | {"status": "no usage endpoint"}
+    try:
+        spend, limit = FETCHERS[provider](path.read_text().strip())
+        return card | {"spend": spend, "limit": limit, "status": "ok" if spend is not None else "active, no spend data"}
+    except urllib.error.HTTPError as error:
+        return card | {"status": "out of budget" if error.code == 402 else f"http {error.code}"}
+    except (urllib.error.URLError, TimeoutError):
+        return card | {"status": "network error"}
+    except (KeyError, ValueError):
+        return card | {"status": "unexpected reply"}
+
+
+def main():
+    report = {
+        "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "subscriptions": [claude_card(), codex_card()],
+        "keys": [key_card(path) for path in sorted(KEYS_DIR.glob("*.key"))],
+    }
+    temporary = OUTPUT.with_suffix(".json.tmp")
+    temporary.write_text(json.dumps(report, indent=2))
+    temporary.replace(OUTPUT)
+
+
+if __name__ == "__main__":
+    main()
