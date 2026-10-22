@@ -4,6 +4,11 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import qs.services
+import qs.modules.lock
+import qs.modules.notch
+import qs.modules.power
+import qs.modules.spotlight
+import qs.modules.wallpaper
 
 ShellRoot {
     Component.onCompleted: Clipboard.refresh()
