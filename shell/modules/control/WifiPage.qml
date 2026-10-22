@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell.Networking
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -26,7 +27,7 @@ Column {
             asking = asking === network ? null : network;
     }
 
-    spacing: 2
+    spacing: Tokens.spacingHairline
     Component.onCompleted: if (device) device.scannerEnabled = true
     Component.onDestruction: if (device) device.scannerEnabled = false
 
@@ -42,12 +43,12 @@ Column {
     Label {
         visible: root.networks.length === 0
         width: parent.width
-        height: 42
+        height: Tokens.listRowHeight
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         text: Networking.wifiEnabled ? "Searching…" : "Wi-Fi is off"
         color: Theme.textDim
-        font.pixelSize: 14
+        font.pixelSize: Tokens.fontMedium
         font.weight: Font.Medium
     }
 
@@ -61,11 +62,11 @@ Column {
             readonly property bool secured: modelData.security !== WifiSecurityType.Open
 
             width: root.width
-            spacing: 2
+            spacing: Tokens.spacingHairline
 
             ListRow {
                 width: parent.width
-                height: 42
+                height: Tokens.listRowHeight
                 glyph: root.bars[Math.min(3, Math.floor(entry.modelData.signalStrength * 4))]
                 title: entry.modelData.name
                 subtitle: entry.modelData.connected ? "Connected" : entry.modelData.known ? "Saved" : ""
@@ -79,20 +80,20 @@ Column {
                 visible: root.asking === entry.modelData
                 width: parent.width
                 height: 44
-                radius: 14
+                radius: Tokens.radiusRow
                 color: Theme.card
                 border.color: Qt.alpha(Theme.accent, 0.5)
 
                 TextInput {
                     id: password
                     anchors.fill: parent
-                    anchors.leftMargin: 16
-                    anchors.rightMargin: 16
+                    anchors.leftMargin: Tokens.marginWide
+                    anchors.rightMargin: Tokens.marginWide
                     verticalAlignment: TextInput.AlignVCenter
                     echoMode: TextInput.Password
                     color: Theme.text
                     font.family: Theme.font
-                    font.pixelSize: 15
+                    font.pixelSize: Tokens.fontLabel
                     onVisibleChanged: if (visible) forceActiveFocus()
                     onAccepted: {
                         entry.modelData.connectWithPsk(text);
@@ -106,7 +107,7 @@ Column {
                         visible: password.text === ""
                         text: "Password for " + entry.modelData.name
                         color: Theme.textDim
-                        font.pixelSize: 15
+                        font.pixelSize: Tokens.fontLabel
                     }
                 }
             }

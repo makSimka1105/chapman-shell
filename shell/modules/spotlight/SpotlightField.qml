@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -16,9 +17,9 @@ FocusScope {
 
     Behavior on scale {
         NumberAnimation {
-            duration: 230
+            duration: Tokens.durationFocus
             easing.type: Easing.OutBack
-            easing.overshoot: 3
+            easing.overshoot: Tokens.overshootSnappy
         }
     }
 
@@ -39,26 +40,26 @@ FocusScope {
     Label {
         id: lens
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: Tokens.marginField
         anchors.verticalCenter: parent.verticalCenter
         text: "󰍉"
         color: Theme.textDim
         font.family: "JetBrainsMono Nerd Font"
-        font.pixelSize: 24
+        font.pixelSize: Tokens.fontDisplay
     }
 
     TextInput {
         id: input
         anchors.left: lens.right
-        anchors.leftMargin: 14
+        anchors.leftMargin: Tokens.marginRow
         anchors.right: parent.right
-        anchors.rightMargin: 24
+        anchors.rightMargin: Tokens.marginField
         anchors.verticalCenter: parent.verticalCenter
         focus: true
         color: Theme.text
         selectionColor: Qt.alpha(Theme.accent, 0.4)
         font.family: Theme.font
-        font.pixelSize: 22
+        font.pixelSize: Tokens.fontLarge
         renderType: Text.NativeRendering
         clip: true
 
@@ -75,7 +76,7 @@ FocusScope {
             visible: input.text === ""
             text: "Spotlight Search"
             color: Theme.textDim
-            font.pixelSize: 22
+            font.pixelSize: Tokens.fontLarge
         }
     }
 }

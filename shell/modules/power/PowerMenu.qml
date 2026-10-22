@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -93,9 +94,9 @@ PanelWindow {
 
         Behavior on openT {
             NumberAnimation {
-                duration: root.opened ? 520 : 150
+                duration: root.opened ? Tokens.durationReveal : Tokens.durationQuick
                 easing.type: root.opened ? Easing.OutBack : Easing.OutCubic
-                easing.overshoot: 1.5
+                easing.overshoot: Tokens.overshootStrong
             }
         }
 
@@ -153,21 +154,21 @@ PanelWindow {
 
                     Behavior on color {
                         ColorAnimation {
-                            duration: 150
+                            duration: Tokens.durationQuick
                         }
                     }
 
                     Behavior on scale {
                         NumberAnimation {
-                            duration: 220
+                            duration: Tokens.durationPress
                             easing.type: Easing.OutBack
-                            easing.overshoot: 3
+                            easing.overshoot: Tokens.overshootSnappy
                         }
                     }
 
                     Column {
                         anchors.centerIn: parent
-                        spacing: 8
+                        spacing: Tokens.spacingItem
 
                         Glyph {
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -180,7 +181,7 @@ PanelWindow {
                             anchors.horizontalCenter: parent.horizontalCenter
                             text: button.isArmed ? "Confirm" : button.modelData.title
                             color: button.isArmed ? Theme.body : Theme.text
-                            font.pixelSize: 13
+                            font.pixelSize: Tokens.fontBody
                             font.weight: Font.DemiBold
                         }
                     }

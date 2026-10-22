@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 
 Row {
@@ -26,14 +27,14 @@ Row {
 
             Behavior on height {
                 NumberAnimation {
-                    duration: 220
+                    duration: Tokens.durationPress
                     easing.type: Easing.OutCubic
                 }
             }
 
             Behavior on color {
                 ColorAnimation {
-                    duration: 220
+                    duration: Tokens.durationPress
                 }
             }
         }

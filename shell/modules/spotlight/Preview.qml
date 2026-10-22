@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Widgets
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -9,6 +10,7 @@ Item {
     id: root
 
     property var item: null
+    readonly property real imageHeight: 190
     readonly property string kind: item?.kind ?? ""
     readonly property string heroImage: item?.image ?? clipImage
     readonly property bool wide: heroImage !== ""
@@ -107,14 +109,14 @@ Item {
 
     Column {
         anchors.fill: parent
-        anchors.margins: 18
-        spacing: 14
+        anchors.margins: Tokens.marginPanel
+        spacing: Tokens.spacingLarge
         visible: root.item !== null
 
         ClippingRectangle {
             width: parent.width
-            height: 190
-            radius: 14
+            height: root.imageHeight
+            radius: Tokens.radiusRow
             visible: root.wide
             color: Theme.card
 
@@ -129,20 +131,20 @@ Item {
 
         Rectangle {
             width: parent.width
-            height: 190
-            radius: 14
+            height: root.imageHeight
+            radius: Tokens.radiusRow
             visible: root.fileText !== ""
             color: Theme.card
             clip: true
 
             Text {
                 anchors.fill: parent
-                anchors.margins: 12
+                anchors.margins: Tokens.marginMedium
                 text: root.fileText
                 textFormat: Text.PlainText
                 color: Theme.textDim
                 font.family: "JetBrains Mono"
-                font.pixelSize: 11
+                font.pixelSize: Tokens.fontCaption
                 renderType: Text.NativeRendering
                 wrapMode: root.kind === "clip" ? Text.WrapAnywhere : Text.NoWrap
             }
@@ -181,7 +183,7 @@ Item {
                 wrapMode: Text.Wrap
                 maximumLineCount: 6
                 elide: Text.ElideRight
-                font.pixelSize: 13
+                font.pixelSize: Tokens.fontBody
             }
         }
     }

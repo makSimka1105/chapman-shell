@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 
 ListView {
@@ -22,14 +23,14 @@ ListView {
         y: root.highlightY
         width: root.width
         height: root.rowHeight
-        radius: 14
+        radius: Tokens.radiusRow
         color: Qt.alpha(root.highlightArmed ? Theme.warning : Theme.accent, 0.22)
 
         Behavior on y {
             NumberAnimation {
-                duration: 260
+                duration: Tokens.durationMove
                 easing.type: Easing.OutBack
-                easing.overshoot: 1.4
+                easing.overshoot: Tokens.overshootMedium
             }
         }
     }

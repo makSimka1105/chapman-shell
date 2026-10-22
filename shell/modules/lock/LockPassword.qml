@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -39,7 +40,7 @@ FocusScope {
                 target: pill
                 property: "flush"
                 to: 1
-                duration: 80
+                duration: Tokens.durationShakeStep
             }
             NumberAnimation {
                 target: pill
@@ -51,7 +52,7 @@ FocusScope {
                 target: pill
                 property: "offset"
                 to: 14
-                duration: 80
+                duration: Tokens.durationShakeStep
             }
             NumberAnimation {
                 target: pill
@@ -63,15 +64,15 @@ FocusScope {
                 target: pill
                 property: "offset"
                 to: 0
-                duration: 300
+                duration: Tokens.durationSlow
                 easing.type: Easing.OutBack
-                easing.overshoot: 3
+                easing.overshoot: Tokens.overshootSnappy
             }
             NumberAnimation {
                 target: pill
                 property: "flush"
                 to: 0
-                duration: 400
+                duration: Tokens.durationLong
             }
         }
 
@@ -93,14 +94,14 @@ FocusScope {
 
         Item {
             anchors.fill: parent
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
+            anchors.leftMargin: Tokens.marginLarge
+            anchors.rightMargin: Tokens.marginLarge
             clip: true
             opacity: root.busy ? 0.5 : 1
 
             Row {
                 anchors.centerIn: parent
-                spacing: 7
+                spacing: Tokens.spacingMid
 
                 Repeater {
                     model: root.text.length
@@ -108,7 +109,7 @@ FocusScope {
                     Rectangle {
                         width: 8
                         height: 8
-                        radius: 4
+                        radius: Tokens.radiusBar
                         color: Theme.text
                     }
                 }
@@ -119,7 +120,7 @@ FocusScope {
                 visible: root.text === ""
                 text: "Enter Password"
                 color: Theme.textDim
-                font.pixelSize: 15
+                font.pixelSize: Tokens.fontLabel
             }
         }
     }

@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -14,25 +15,25 @@ Rectangle {
 
     width: 58
     height: 46
-    radius: 14
+    radius: Tokens.radiusRow
     color: Theme.card
 
     Column {
         anchors.centerIn: parent
-        spacing: 2
+        spacing: Tokens.spacingHairline
 
         Glyph {
             anchors.horizontalCenter: parent.horizontalCenter
             text: root.glyph
             color: root.glyphColor
-            font.pixelSize: 18
+            font.pixelSize: Tokens.fontIcon
         }
 
         Label {
             anchors.horizontalCenter: parent.horizontalCenter
             text: root.caption
             color: root.captionColor
-            font.pixelSize: 11
+            font.pixelSize: Tokens.fontCaption
             font.weight: Font.DemiBold
         }
     }

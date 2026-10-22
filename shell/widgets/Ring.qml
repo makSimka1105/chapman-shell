@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 
 Item {
@@ -30,12 +31,12 @@ Item {
 
             NumberAnimation {
                 to: 0.35
-                duration: 900
+                duration: Tokens.durationRing
             }
 
             NumberAnimation {
                 to: 1
-                duration: 900
+                duration: Tokens.durationRing
             }
         }
 

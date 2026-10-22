@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -72,7 +73,7 @@ Item {
 
     signal back
 
-    implicitHeight: 44 + 10 + bodyHeight
+    implicitHeight: Tokens.pageHeaderHeight + 10 + bodyHeight
 
     PageHeader {
         id: header
@@ -86,7 +87,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             text: Usage.known ? "обновлено " + Qt.formatTime(Usage.updated, "HH:mm") : "нет данных"
             color: Theme.textDim
-            font.pixelSize: 13
+            font.pixelSize: Tokens.fontBody
             font.weight: Font.Medium
         }
     }
@@ -96,7 +97,7 @@ Item {
 
         y: header.height + 10
         width: root.railWidth
-        spacing: 8
+        spacing: Tokens.spacingItem
 
         Repeater {
             model: root.rails

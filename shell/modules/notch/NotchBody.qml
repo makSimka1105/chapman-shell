@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Shapes
+import qs.core
 import qs.services
 
 Item {
@@ -14,9 +15,9 @@ Item {
 
     Behavior on swell {
         NumberAnimation {
-            duration: 200
+            duration: Tokens.durationNormal
             easing.type: Easing.OutBack
-            easing.overshoot: 1
+            easing.overshoot: Tokens.overshootMild
         }
     }
 

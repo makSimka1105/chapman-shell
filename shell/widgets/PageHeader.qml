@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 
 Item {
@@ -11,7 +12,7 @@ Item {
     signal back
     signal toggled
 
-    height: 44
+    height: Tokens.pageHeaderHeight
 
     Rectangle {
         id: backButton
@@ -19,22 +20,22 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         width: 34
         height: 34
-        radius: 17
+        radius: Tokens.radiusBackButton
         color: backArea.containsMouse ? Qt.alpha(Theme.text, 0.12) : Theme.card
         scale: backArea.pressed ? 0.88 : 1
 
         Behavior on scale {
             NumberAnimation {
-                duration: 220
+                duration: Tokens.durationPress
                 easing.type: Easing.OutBack
-                easing.overshoot: 3
+                easing.overshoot: Tokens.overshootSnappy
             }
         }
 
         Glyph {
             anchors.centerIn: parent
             text: "󰅁"
-            font.pixelSize: 18
+            font.pixelSize: Tokens.fontIcon
         }
 
         MouseArea {
@@ -47,7 +48,7 @@ Item {
 
     Label {
         anchors.left: backButton.right
-        anchors.leftMargin: 12
+        anchors.leftMargin: Tokens.marginMedium
         anchors.verticalCenter: parent.verticalCenter
         text: root.title
         font.pixelSize: 19

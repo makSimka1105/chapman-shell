@@ -1,9 +1,10 @@
 import QtQuick
+import qs.core
 
 ShaderEffect {
     id: root
 
-    property real radius: 26
+    property real radius: Tokens.radiusPanel
     property bool lit
     property point at: Qt.point(width / 2, height / 2)
     property color color: "white"

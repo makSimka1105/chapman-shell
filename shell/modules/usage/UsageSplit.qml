@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -10,49 +11,49 @@ Column {
     property real cache: 0
     readonly property real sum: Math.max(1, input + output)
 
-    spacing: 6
+    spacing: Tokens.spacingSmall
 
     Row {
         width: parent.width
-        height: 8
-        spacing: 2
+        height: Tokens.trackHeight
+        spacing: Tokens.spacingHairline
 
         Rectangle {
             width: (root.width - 2) * root.input / root.sum
             height: parent.height
-            radius: 4
+            radius: Tokens.radiusBar
             color: Usage.inputColor
         }
 
         Rectangle {
             width: (root.width - 2) * root.output / root.sum
             height: parent.height
-            radius: 4
+            radius: Tokens.radiusBar
             color: Usage.outputColor
         }
     }
 
     Flow {
         width: parent.width
-        spacing: 14
+        spacing: Tokens.spacingLarge
 
         Label {
             text: "input " + Usage.tokensText(root.input) + " · " + Math.round(root.input / root.sum * 100) + "%"
             color: Theme.textDim
-            font.pixelSize: 12
+            font.pixelSize: Tokens.fontSmall
         }
 
         Label {
             text: "output " + Usage.tokensText(root.output) + " · " + Math.round(root.output / root.sum * 100) + "%"
             color: Theme.textDim
-            font.pixelSize: 12
+            font.pixelSize: Tokens.fontSmall
         }
 
         Label {
             visible: root.cache > 0
             text: "из input в кэше " + Usage.tokensText(root.cache)
             color: Theme.textDim
-            font.pixelSize: 12
+            font.pixelSize: Tokens.fontSmall
         }
     }
 }

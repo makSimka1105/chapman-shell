@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -47,7 +48,7 @@ Item {
                 y: -height / 2
                 text: root.format(root.ceiling * gridLine.modelData)
                 color: Theme.textDim
-                font.pixelSize: 10
+                font.pixelSize: Tokens.fontMicro
             }
         }
     }
@@ -76,7 +77,7 @@ Item {
                     width: column.width - 10
                     height: size > 0 ? Math.max(2, size - 1) : 0
                     y: root.plotHeight - (root.below(column.index, index) / root.ceiling * root.plotHeight) - size
-                    radius: 3
+                    radius: Tokens.radiusThin
                     color: root.series[index].color
                     opacity: column.index === root.labels.length - 1 ? 1 : 0.6
                 }
@@ -87,7 +88,7 @@ Item {
                 y: root.plotHeight + 4
                 text: root.labels[column.index]
                 color: Theme.textDim
-                font.pixelSize: 10
+                font.pixelSize: Tokens.fontMicro
             }
         }
     }

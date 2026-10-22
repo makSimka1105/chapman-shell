@@ -1,22 +1,23 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
 Row {
-    spacing: 8
+    spacing: Tokens.spacingItem
 
     Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         width: layoutCode.width + 20
         height: 26
-        radius: 13
+        radius: Tokens.radiusBadge
         color: Qt.alpha(Theme.text, 0.14)
 
         Label {
             id: layoutCode
             anchors.centerIn: parent
             text: Niri.layoutCode
-            font.pixelSize: 13
+            font.pixelSize: Tokens.fontBody
             font.weight: Font.DemiBold
         }
 
@@ -42,6 +43,6 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         text: Status.wifiNetwork?.name ?? "Not connected"
         color: Theme.textDim
-        font.pixelSize: 15
+        font.pixelSize: Tokens.fontLabel
     }
 }

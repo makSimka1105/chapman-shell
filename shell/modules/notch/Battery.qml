@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -34,7 +35,7 @@ Item {
 
             Behavior on width {
                 NumberAnimation {
-                    duration: 300
+                    duration: Tokens.durationSlow
                 }
             }
         }
@@ -67,7 +68,7 @@ Item {
         anchors.verticalCenter: body.verticalCenter
         width: 3
         height: root.bodyHeight * 0.36
-        radius: 1.5
+        radius: Tokens.radiusHairline
         color: Theme.textDim
     }
 }

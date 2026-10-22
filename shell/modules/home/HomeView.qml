@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Networking
 import Quickshell.Services.UPower
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -49,7 +50,7 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: root.side
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 12
+        spacing: Tokens.spacingMedium
 
         HomeFocus {
             title: root.app?.name ?? Niri.focusedWindow?.app_id ?? "Desktop"
@@ -72,7 +73,7 @@ Item {
         anchors.left: leftColumn.right
         anchors.leftMargin: 34
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 14
+        spacing: Tokens.spacingLarge
 
         BatteryCard {
             id: batteryCard
@@ -127,11 +128,11 @@ Item {
 
         Column {
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 10
+            spacing: Tokens.spacingRelaxed
 
             Grid {
                 columns: 2
-                spacing: 8
+                spacing: Tokens.spacingItem
 
                 HomeTile {
                     glyph: "󰌌"

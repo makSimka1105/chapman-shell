@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -7,7 +8,7 @@ Item {
 
     Row {
         anchors.centerIn: parent
-        spacing: 14
+        spacing: Tokens.spacingLarge
 
         Glyph {
             anchors.verticalCenter: parent.verticalCenter
@@ -15,25 +16,25 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             text: Osd.glyph
             color: Osd.kind === "volume" && Osd.muted ? Theme.textDim : Theme.accent
-            font.pixelSize: 24
+            font.pixelSize: Tokens.fontDisplay
         }
 
         Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             width: 150
-            height: 8
-            radius: 4
+            height: Tokens.trackHeight
+            radius: Tokens.radiusBar
             color: Theme.faint
 
             Rectangle {
                 width: Math.max(parent.height, parent.width * Osd.value)
                 height: parent.height
-                radius: 4
+                radius: Tokens.radiusBar
                 color: Theme.text
 
                 Behavior on width {
                     NumberAnimation {
-                        duration: 160
+                        duration: Tokens.durationFast
                         easing.type: Easing.OutCubic
                     }
                 }
@@ -45,7 +46,7 @@ Item {
             width: 34
             horizontalAlignment: Text.AlignRight
             text: Math.round(Osd.value * 100)
-            font.pixelSize: 16
+            font.pixelSize: Tokens.fontSubtitle
             font.weight: Font.DemiBold
         }
     }

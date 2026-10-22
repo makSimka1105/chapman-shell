@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Bluetooth
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -19,7 +20,7 @@ Item {
     Workspaces {
         id: workspaces
         anchors.left: parent.left
-        anchors.leftMargin: 18
+        anchors.leftMargin: Tokens.marginPanel
         anchors.verticalCenter: parent.verticalCenter
         output: root.output
     }
@@ -47,7 +48,7 @@ Item {
 
     Row {
         anchors.right: parent.right
-        anchors.rightMargin: 16
+        anchors.rightMargin: Tokens.marginWide
         anchors.verticalCenter: parent.verticalCenter
         spacing: 9
 
@@ -55,7 +56,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             text: Niri.layoutCode
             color: Theme.textDim
-            font.pixelSize: 14
+            font.pixelSize: Tokens.fontMedium
             font.weight: Font.DemiBold
         }
 
@@ -63,14 +64,14 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             text: !bluetoothOn ? "󰂲" : bluetoothLinked ? "󰂱" : "󰂯"
             color: bluetoothOn ? Theme.accent : Theme.faint
-            font.pixelSize: 20
+            font.pixelSize: Tokens.fontHeading
         }
 
         Glyph {
             anchors.verticalCenter: parent.verticalCenter
             text: Status.wifiNetwork === null ? "󰤭" : Status.wifiStrength > 0.66 ? "󰤨" : Status.wifiStrength > 0.33 ? "󰤥" : "󰤢"
             color: Status.wifiNetwork !== null ? Theme.accent : Theme.faint
-            font.pixelSize: 20
+            font.pixelSize: Tokens.fontHeading
         }
 
         Battery {

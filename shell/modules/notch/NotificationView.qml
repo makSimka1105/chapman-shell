@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Notifications
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -21,11 +22,11 @@ Item {
     ClippingRectangle {
         id: icon
         anchors.left: parent.left
-        anchors.leftMargin: 20
+        anchors.leftMargin: Tokens.marginLarge
         anchors.verticalCenter: parent.verticalCenter
         width: 46
         height: 46
-        radius: 12
+        radius: Tokens.radiusChip
         color: root.critical ? Theme.warning : Theme.accent
 
         Label {
@@ -33,7 +34,7 @@ Item {
             visible: image.status !== Image.Ready
             text: (root.notification?.appName || root.notification?.summary || "?").charAt(0).toUpperCase()
             color: "black"
-            font.pixelSize: 20
+            font.pixelSize: Tokens.fontHeading
             font.weight: Font.Bold
         }
 
@@ -48,11 +49,11 @@ Item {
 
     Column {
         anchors.left: icon.right
-        anchors.leftMargin: 14
+        anchors.leftMargin: Tokens.marginRow
         anchors.right: parent.right
         anchors.rightMargin: 22
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 2
+        spacing: Tokens.spacingHairline
 
         Label {
             width: parent.width
@@ -60,7 +61,7 @@ Item {
             visible: text !== ""
             color: root.critical ? Theme.warning : Theme.textDim
             elide: Text.ElideRight
-            font.pixelSize: 12
+            font.pixelSize: Tokens.fontSmall
         }
 
         Label {
@@ -68,7 +69,7 @@ Item {
             text: root.notification?.summary ?? ""
             textFormat: Text.PlainText
             elide: Text.ElideRight
-            font.pixelSize: 15
+            font.pixelSize: Tokens.fontLabel
             font.weight: Font.DemiBold
         }
 
@@ -81,7 +82,7 @@ Item {
             wrapMode: Text.Wrap
             maximumLineCount: 2
             elide: Text.ElideRight
-            font.pixelSize: 13
+            font.pixelSize: Tokens.fontBody
         }
     }
 }

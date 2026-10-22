@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -7,13 +8,13 @@ Row {
 
     required property string title
 
-    spacing: 8
+    spacing: Tokens.spacingItem
 
     Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         width: 6
         height: 6
-        radius: 3
+        radius: Tokens.radiusThin
         color: Theme.accent
     }
 
@@ -21,7 +22,7 @@ Row {
         width: 150
         text: root.title
         elide: Text.ElideRight
-        font.pixelSize: 15
+        font.pixelSize: Tokens.fontLabel
         font.weight: Font.Medium
     }
 }

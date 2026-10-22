@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 
 Row {
@@ -9,7 +10,7 @@ Row {
     property real barHeight: 22
     property real barWidth: 3
 
-    spacing: 3
+    spacing: Tokens.spacingTight
     height: barHeight
 
     Repeater {
@@ -29,7 +30,7 @@ Row {
 
             Behavior on level {
                 NumberAnimation {
-                    duration: 160
+                    duration: Tokens.durationFast
                     easing.type: Easing.OutCubic
                 }
             }

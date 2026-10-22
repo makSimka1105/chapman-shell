@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.modules.control
 import qs.modules.home
@@ -57,7 +58,7 @@ Item {
         NumberAnimation {
             duration: root.morphDuration
             easing.type: Easing.OutBack
-            easing.overshoot: 1
+            easing.overshoot: Tokens.overshootMild
         }
     }
 
@@ -65,7 +66,7 @@ Item {
         NumberAnimation {
             duration: root.morphDuration
             easing.type: Easing.OutBack
-            easing.overshoot: 1
+            easing.overshoot: Tokens.overshootMild
         }
     }
 
@@ -91,7 +92,7 @@ Item {
             to: 1
             duration: root.morphDuration * 2 / 3
             easing.type: Easing.OutBack
-            easing.overshoot: 1.5
+            easing.overshoot: Tokens.overshootStrong
         }
     }
 
@@ -172,7 +173,7 @@ Item {
 
             Behavior on opacity {
                 NumberAnimation {
-                    duration: 120
+                    duration: Tokens.durationHover
                 }
             }
         }
@@ -186,7 +187,7 @@ Item {
 
             Behavior on opacity {
                 NumberAnimation {
-                    duration: 200
+                    duration: Tokens.durationNormal
                     easing.type: Easing.InCubic
                 }
             }
@@ -201,7 +202,7 @@ Item {
 
             Behavior on opacity {
                 NumberAnimation {
-                    duration: 150
+                    duration: Tokens.durationQuick
                 }
             }
         }
@@ -217,7 +218,7 @@ Item {
 
             Behavior on opacity {
                 NumberAnimation {
-                    duration: 200
+                    duration: Tokens.durationNormal
                     easing.type: Easing.InCubic
                 }
             }
@@ -234,7 +235,7 @@ Item {
 
             Behavior on opacity {
                 NumberAnimation {
-                    duration: 200
+                    duration: Tokens.durationNormal
                     easing.type: Easing.InCubic
                 }
             }

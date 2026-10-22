@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -24,9 +25,9 @@ Item {
 
     Behavior on openT {
         NumberAnimation {
-            duration: 400
+            duration: Tokens.durationLong
             easing.type: Easing.OutBack
-            easing.overshoot: 1.2
+            easing.overshoot: Tokens.overshootSoft
         }
     }
 
@@ -54,7 +55,7 @@ Item {
         anchors.bottomMargin: root.height * 0.14
         opacity: Math.min(1, root.openT * 1.6)
         scale: 0.9 + 0.1 * root.openT
-        spacing: 14
+        spacing: Tokens.spacingLarge
 
         Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
@@ -95,14 +96,14 @@ Item {
     LockBatteryMedia {
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        anchors.margins: 32
+        anchors.margins: Tokens.marginScreen
         opacity: Math.min(1, root.openT * 1.6)
     }
 
     LockLayoutWifi {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: 32
+        anchors.margins: Tokens.marginScreen
         opacity: Math.min(1, root.openT * 1.6)
     }
 }

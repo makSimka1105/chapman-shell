@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -21,11 +22,11 @@ Column {
     readonly property real fivePace: 1 - Math.max(0, Math.min(5 * 3600000, Usage.fiveHourReset - new Date())) / (5 * 3600000)
     readonly property real sevenPace: 1 - Math.max(0, Math.min(7 * 86400000, Usage.sevenDayReset - new Date())) / (7 * 86400000)
 
-    spacing: 12
+    spacing: Tokens.spacingMedium
 
     Row {
         width: parent.width
-        spacing: 8
+        spacing: Tokens.spacingItem
 
         Repeater {
             model: root.cards
@@ -44,7 +45,7 @@ Column {
     Row {
         width: parent.width
         height: Math.max(leftCard.implicitHeight, rightCard.implicitHeight)
-        spacing: 12
+        spacing: Tokens.spacingMedium
 
         UsageCard {
             id: leftCard
@@ -60,7 +61,7 @@ Column {
             }
 
             Row {
-                spacing: 14
+                spacing: Tokens.spacingLarge
 
                 Repeater {
                     model: Usage.sourceKeys
@@ -70,7 +71,7 @@ Column {
 
                         text: "● " + Usage.sourceNames[modelData]
                         color: Usage.sourceColors[modelData]
-                        font.pixelSize: 12
+                        font.pixelSize: Tokens.fontSmall
                     }
                 }
             }

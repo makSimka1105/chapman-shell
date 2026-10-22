@@ -1,0 +1,74 @@
+pragma Singleton
+import QtQuick
+import Quickshell
+
+Singleton {
+    readonly property real radiusHairline: 1.5
+    readonly property real radiusThin: 3
+    readonly property real radiusBar: 4
+    readonly property real radiusChip: 12
+    readonly property real radiusBadge: 13
+    readonly property real radiusRow: 14
+    readonly property real radiusMedia: 16
+    readonly property real radiusBackButton: 17
+    readonly property real radiusCard: 18
+    readonly property real radiusPanel: 26
+
+    readonly property real spacingHairline: 2
+    readonly property real spacingTight: 3
+    readonly property real spacingSnug: 4
+    readonly property real spacingCompact: 5
+    readonly property real spacingSmall: 6
+    readonly property real spacingMid: 7
+    readonly property real spacingItem: 8
+    readonly property real spacingRelaxed: 10
+    readonly property real spacingMedium: 12
+    readonly property real spacingLarge: 14
+
+    readonly property real hitAreaMargin: -6
+    readonly property real marginTight: 6
+    readonly property real marginInner: 10
+    readonly property real marginMedium: 12
+    readonly property real marginRow: 14
+    readonly property real marginWide: 16
+    readonly property real marginPanel: 18
+    readonly property real marginLarge: 20
+    readonly property real marginField: 24
+    readonly property real marginScreen: 32
+
+    readonly property int fontMicro: 10
+    readonly property int fontCaption: 11
+    readonly property int fontSmall: 12
+    readonly property int fontBody: 13
+    readonly property int fontMedium: 14
+    readonly property int fontLabel: 15
+    readonly property int fontSubtitle: 16
+    readonly property int fontIcon: 18
+    readonly property int fontHeading: 20
+    readonly property int fontLarge: 22
+    readonly property int fontDisplay: 24
+
+    readonly property int durationShakeStep: 80
+    readonly property int durationHover: 120
+    readonly property int durationQuick: 150
+    readonly property int durationFast: 160
+    readonly property int durationNormal: 200
+    readonly property int durationPress: 220
+    readonly property int durationFocus: 230
+    readonly property int durationMove: 260
+    readonly property int durationSlow: 300
+    readonly property int durationLong: 400
+    readonly property int durationEntrance: 460
+    readonly property int durationReveal: 520
+    readonly property int durationRing: 900
+
+    readonly property real overshootMild: 1
+    readonly property real overshootSoft: 1.2
+    readonly property real overshootMedium: 1.4
+    readonly property real overshootStrong: 1.5
+    readonly property real overshootSnappy: 3
+
+    readonly property real listRowHeight: 42
+    readonly property real pageHeaderHeight: 44
+    readonly property real trackHeight: 8
+}

@@ -1,10 +1,11 @@
 import QtQuick
+import qs.core
 
 Item {
     id: root
 
     required property GlassContext context
-    property real radius: 26
+    property real radius: Tokens.radiusPanel
     property real tint: 0.3
     property real thickness: 24
     property real dispersion: 0.06

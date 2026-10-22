@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -12,7 +13,7 @@ Item {
 
     Column {
         id: usageColumn
-        spacing: 7
+        spacing: Tokens.spacingMid
 
         Repeater {
             model: [
@@ -24,14 +25,14 @@ Item {
             Row {
                 required property var modelData
 
-                spacing: 8
+                spacing: Tokens.spacingItem
 
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
                     width: 22
                     text: parent.modelData.label
                     color: Theme.textDim
-                    font.pixelSize: 12
+                    font.pixelSize: Tokens.fontSmall
                     font.weight: Font.DemiBold
                 }
 
@@ -39,18 +40,18 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     width: 110
                     height: 6
-                    radius: 3
+                    radius: Tokens.radiusThin
                     color: Theme.faint
 
                     Rectangle {
                         width: Usage.known ? Math.max(parent.height, parent.width * Math.min(1, parent.parent.modelData.value)) : 0
                         height: parent.height
-                        radius: 3
+                        radius: Tokens.radiusThin
                         color: parent.parent.modelData.value > 0.85 ? Theme.warning : Theme.accent
 
                         Behavior on width {
                             NumberAnimation {
-                                duration: 400
+                                duration: Tokens.durationLong
                                 easing.type: Easing.OutCubic
                             }
                         }
@@ -60,7 +61,7 @@ Item {
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
                     text: Usage.known ? parent.modelData.text : "-"
-                    font.pixelSize: 12
+                    font.pixelSize: Tokens.fontSmall
                     font.weight: Font.DemiBold
                 }
             }

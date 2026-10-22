@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -18,7 +19,7 @@ Rectangle {
     signal clicked
 
     implicitHeight: column.implicitHeight + 20
-    radius: 18
+    radius: Tokens.radiusCard
     color: selected ? Qt.alpha(Theme.text, 0.1) : area.containsMouse ? Qt.alpha(Theme.text, 0.07) : Theme.card
     border.width: 1
     border.color: selected ? Theme.faint : "transparent"
@@ -29,7 +30,7 @@ Rectangle {
         x: 14
         y: 10
         width: parent.width - 28
-        spacing: 5
+        spacing: Tokens.spacingCompact
 
         Item {
             width: parent.width
@@ -51,7 +52,7 @@ Rectangle {
                 anchors.left: dot.right
                 anchors.leftMargin: 8
                 text: root.title
-                font.pixelSize: 13
+                font.pixelSize: Tokens.fontBody
                 font.weight: Font.DemiBold
             }
 
@@ -69,18 +70,18 @@ Rectangle {
                     anchors.centerIn: parent
                     text: root.chip
                     color: root.chipWarn ? Theme.warning : Theme.text
-                    font.pixelSize: 10
+                    font.pixelSize: Tokens.fontMicro
                     font.weight: Font.DemiBold
                 }
             }
         }
 
         Row {
-            spacing: 6
+            spacing: Tokens.spacingSmall
 
             Label {
                 text: root.figure
-                font.pixelSize: 22
+                font.pixelSize: Tokens.fontLarge
                 font.weight: Font.Bold
             }
 
@@ -88,20 +89,20 @@ Rectangle {
                 anchors.baseline: parent.children[0].baseline
                 text: root.unit
                 color: Theme.textDim
-                font.pixelSize: 12
+                font.pixelSize: Tokens.fontSmall
             }
         }
 
         Row {
             width: parent.width
-            height: 8
-            spacing: 2
+            height: Tokens.trackHeight
+            spacing: Tokens.spacingHairline
 
             Rectangle {
                 visible: root.segments.length === 0
                 width: parent.width
                 height: parent.height
-                radius: 4
+                radius: Tokens.radiusBar
                 color: Theme.faint
             }
 
@@ -112,8 +113,8 @@ Rectangle {
                     required property var modelData
 
                     width: Math.max(modelData.ratio > 0 ? 4 : 0, (column.width - (root.segments.length - 1) * 2) * Math.min(1, modelData.ratio))
-                    height: 8
-                    radius: 4
+                    height: Tokens.trackHeight
+                    radius: Tokens.radiusBar
                     color: modelData.color
                     opacity: modelData.opacity ?? 1
                 }
@@ -124,7 +125,7 @@ Rectangle {
             width: parent.width
             text: root.caption
             color: Theme.textDim
-            font.pixelSize: 12
+            font.pixelSize: Tokens.fontSmall
             elide: Text.ElideRight
         }
     }

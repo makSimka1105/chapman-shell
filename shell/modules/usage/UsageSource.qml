@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -45,11 +46,11 @@ Column {
         ];
     }
 
-    spacing: 12
+    spacing: Tokens.spacingMedium
 
     Row {
         width: parent.width
-        spacing: 8
+        spacing: Tokens.spacingItem
 
         Repeater {
             model: root.cards
@@ -69,7 +70,7 @@ Column {
         visible: root.hasData
         width: parent.width
         height: Math.max(leftCard.implicitHeight, rightCard.implicitHeight)
-        spacing: 12
+        spacing: Tokens.spacingMedium
 
         UsageCard {
             id: leftCard
@@ -90,7 +91,7 @@ Column {
             Label {
                 text: "СЕГОДНЯ ПО ЧАСАМ, ЗАПРОСЫ"
                 color: Theme.textDim
-                font.pixelSize: 11
+                font.pixelSize: Tokens.fontCaption
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
             }
@@ -119,7 +120,7 @@ Column {
             Label {
                 text: "ЦЕНА ЗА 1M ТОКЕНОВ"
                 color: Theme.textDim
-                font.pixelSize: 11
+                font.pixelSize: Tokens.fontCaption
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
             }
@@ -138,7 +139,7 @@ Column {
                     Label {
                         width: parent.width - priceLabel.width - 8
                         text: priceRow.modelData.model
-                        font.pixelSize: 12
+                        font.pixelSize: Tokens.fontSmall
                         elide: Text.ElideRight
                     }
 
@@ -148,7 +149,7 @@ Column {
                         anchors.right: parent.right
                         text: priceRow.modelData.p ? Usage.priceText(priceRow.modelData.p[0]) + " in · " + Usage.priceText(priceRow.modelData.p[1]) + " out" : "нет цены"
                         color: Theme.textDim
-                        font.pixelSize: 12
+                        font.pixelSize: Tokens.fontSmall
                     }
                 }
             }
@@ -164,7 +165,7 @@ Column {
             width: parent.width
             text: "Токены этого ключа не считаются: OpenRouter отдаёт только расход в долларах, а локальных сессий через него нет. Расход и остаток лимита берутся с сервера."
             color: Theme.textDim
-            font.pixelSize: 13
+            font.pixelSize: Tokens.fontBody
             wrapMode: Text.WordWrap
         }
     }

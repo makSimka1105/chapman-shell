@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -11,7 +12,7 @@ Column {
     property real pace: -1
     property color tint: Theme.accent
 
-    spacing: 5
+    spacing: Tokens.spacingCompact
 
     Item {
         width: parent.width
@@ -21,7 +22,7 @@ Column {
             id: caption
 
             text: root.title
-            font.pixelSize: 13
+            font.pixelSize: Tokens.fontBody
             font.weight: Font.DemiBold
         }
 
@@ -29,20 +30,20 @@ Column {
             anchors.right: parent.right
             text: root.note
             color: Theme.textDim
-            font.pixelSize: 12
+            font.pixelSize: Tokens.fontSmall
         }
     }
 
     Rectangle {
         width: parent.width
-        height: 8
-        radius: 4
+        height: Tokens.trackHeight
+        radius: Tokens.radiusBar
         color: Theme.faint
 
         Rectangle {
             width: Math.max(parent.height, parent.width * Math.min(1, root.used))
             height: parent.height
-            radius: 4
+            radius: Tokens.radiusBar
             color: root.used > 0.85 ? Theme.warning : root.tint
         }
 

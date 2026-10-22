@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 
 Rectangle {
@@ -14,28 +15,28 @@ Rectangle {
     signal clicked
 
     height: 48
-    radius: 14
+    radius: Tokens.radiusRow
     color: root.active ? Qt.alpha(Theme.accent, 0.18) : area.containsMouse ? Qt.alpha(Theme.text, 0.08) : "transparent"
     scale: area.pressed ? 0.98 : 1
 
     Behavior on color {
         ColorAnimation {
-            duration: 120
+            duration: Tokens.durationHover
         }
     }
 
     Behavior on scale {
         NumberAnimation {
-            duration: 200
+            duration: Tokens.durationNormal
             easing.type: Easing.OutBack
-            easing.overshoot: 3
+            easing.overshoot: Tokens.overshootSnappy
         }
     }
 
     Glyph {
         id: icon
         anchors.left: parent.left
-        anchors.leftMargin: 14
+        anchors.leftMargin: Tokens.marginRow
         anchors.verticalCenter: parent.verticalCenter
         width: 22
         text: root.glyph
@@ -44,16 +45,16 @@ Rectangle {
 
     Column {
         anchors.left: icon.right
-        anchors.leftMargin: 12
+        anchors.leftMargin: Tokens.marginMedium
         anchors.right: tail.left
-        anchors.rightMargin: 10
+        anchors.rightMargin: Tokens.marginInner
         anchors.verticalCenter: parent.verticalCenter
 
         Label {
             width: parent.width
             text: root.title
             elide: Text.ElideRight
-            font.pixelSize: 15
+            font.pixelSize: Tokens.fontLabel
             font.weight: Font.DemiBold
         }
 
@@ -63,7 +64,7 @@ Rectangle {
             text: root.subtitle
             color: Theme.textDim
             elide: Text.ElideRight
-            font.pixelSize: 12
+            font.pixelSize: Tokens.fontSmall
             font.weight: Font.Medium
         }
     }
@@ -71,11 +72,11 @@ Rectangle {
     Label {
         id: tail
         anchors.right: parent.right
-        anchors.rightMargin: 14
+        anchors.rightMargin: Tokens.marginRow
         anchors.verticalCenter: parent.verticalCenter
         text: root.busy ? "…" : root.trailing
         color: Theme.textDim
-        font.pixelSize: 13
+        font.pixelSize: Tokens.fontBody
         font.weight: Font.DemiBold
     }
 

@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -10,7 +11,7 @@ Column {
 
     signal back
 
-    spacing: 2
+    spacing: Tokens.spacingHairline
 
     PageHeader {
         width: parent.width
@@ -22,15 +23,15 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             width: clearLabel.implicitWidth + 24
             height: 34
-            radius: 17
+            radius: Tokens.radiusBackButton
             color: clearArea.containsMouse ? Qt.alpha(Theme.text, 0.12) : Theme.card
             scale: clearArea.pressed ? 0.92 : 1
 
             Behavior on scale {
                 NumberAnimation {
-                    duration: 220
+                    duration: Tokens.durationPress
                     easing.type: Easing.OutBack
-                    easing.overshoot: 3
+                    easing.overshoot: Tokens.overshootSnappy
                 }
             }
 
@@ -38,7 +39,7 @@ Column {
                 id: clearLabel
                 anchors.centerIn: parent
                 text: "Clear"
-                font.pixelSize: 14
+                font.pixelSize: Tokens.fontMedium
                 font.weight: Font.DemiBold
             }
 
@@ -54,12 +55,12 @@ Column {
     Label {
         visible: root.items.length === 0
         width: parent.width
-        height: 42
+        height: Tokens.listRowHeight
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         text: "No notifications"
         color: Theme.textDim
-        font.pixelSize: 14
+        font.pixelSize: Tokens.fontMedium
         font.weight: Font.Medium
     }
 
@@ -73,21 +74,21 @@ Column {
 
             width: root.width
             height: 62
-            radius: 14
+            radius: Tokens.radiusRow
             color: rowArea.containsMouse ? Qt.alpha(Theme.text, 0.08) : "transparent"
             scale: rowArea.pressed ? 0.98 : 1
 
             Behavior on color {
                 ColorAnimation {
-                    duration: 120
+                    duration: Tokens.durationHover
                 }
             }
 
             Behavior on scale {
                 NumberAnimation {
-                    duration: 200
+                    duration: Tokens.durationNormal
                     easing.type: Easing.OutBack
-                    easing.overshoot: 3
+                    easing.overshoot: Tokens.overshootSnappy
                 }
             }
 
@@ -100,9 +101,9 @@ Column {
 
             Column {
                 anchors.left: parent.left
-                anchors.leftMargin: 14
+                anchors.leftMargin: Tokens.marginRow
                 anchors.right: closeButton.left
-                anchors.rightMargin: 10
+                anchors.rightMargin: Tokens.marginInner
                 anchors.verticalCenter: parent.verticalCenter
 
                 Label {
@@ -110,7 +111,7 @@ Column {
                     text: entry.modelData.appName
                     color: Theme.textDim
                     elide: Text.ElideRight
-                    font.pixelSize: 11
+                    font.pixelSize: Tokens.fontCaption
                     font.weight: Font.Medium
                 }
 
@@ -118,7 +119,7 @@ Column {
                     width: parent.width
                     text: entry.modelData.summary
                     elide: Text.ElideRight
-                    font.pixelSize: 15
+                    font.pixelSize: Tokens.fontLabel
                     font.weight: Font.Bold
                 }
 
@@ -129,7 +130,7 @@ Column {
                     color: Theme.textDim
                     elide: Text.ElideRight
                     maximumLineCount: 1
-                    font.pixelSize: 12
+                    font.pixelSize: Tokens.fontSmall
                     font.weight: Font.Medium
                 }
             }
@@ -137,26 +138,26 @@ Column {
             Rectangle {
                 id: closeButton
                 anchors.right: parent.right
-                anchors.rightMargin: 14
+                anchors.rightMargin: Tokens.marginRow
                 anchors.verticalCenter: parent.verticalCenter
                 width: 26
                 height: 26
-                radius: 13
+                radius: Tokens.radiusBadge
                 color: closeArea.containsMouse ? Qt.alpha(Theme.text, 0.12) : Theme.card
                 scale: closeArea.pressed ? 0.88 : 1
 
                 Behavior on scale {
                     NumberAnimation {
-                        duration: 220
+                        duration: Tokens.durationPress
                         easing.type: Easing.OutBack
-                        easing.overshoot: 3
+                        easing.overshoot: Tokens.overshootSnappy
                     }
                 }
 
                 Glyph {
                     anchors.centerIn: parent
                     text: "󰅖"
-                    font.pixelSize: 13
+                    font.pixelSize: Tokens.fontBody
                 }
 
                 MouseArea {

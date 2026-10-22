@@ -1,12 +1,13 @@
 import QtQuick
 import Quickshell.Widgets
+import qs.core
 import qs.services
 import qs.widgets
 
 Rectangle {
     id: root
 
-    radius: 16
+    radius: Tokens.radiusMedia
     color: Theme.card
 
     Timer {
@@ -29,7 +30,7 @@ Rectangle {
     ClippingRectangle {
         id: cover
         anchors.left: parent.left
-        anchors.leftMargin: 10
+        anchors.leftMargin: Tokens.marginInner
         anchors.verticalCenter: parent.verticalCenter
         width: parent.height - 20
         height: width
@@ -39,7 +40,7 @@ Rectangle {
 
         Behavior on opacity {
             NumberAnimation {
-                duration: 200
+                duration: Tokens.durationNormal
             }
         }
 
@@ -53,15 +54,15 @@ Rectangle {
 
     Column {
         anchors.left: cover.right
-        anchors.leftMargin: 10
+        anchors.leftMargin: Tokens.marginInner
         anchors.right: controls.left
-        anchors.rightMargin: 10
+        anchors.rightMargin: Tokens.marginInner
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 3
+        spacing: Tokens.spacingTight
 
         Row {
             width: parent.width
-            spacing: 6
+            spacing: Tokens.spacingSmall
 
             Label {
                 id: title
@@ -69,7 +70,7 @@ Rectangle {
                 text: Media.title || "Nothing playing"
                 color: Media.player ? Theme.text : Theme.textDim
                 elide: Text.ElideRight
-                font.pixelSize: 13
+                font.pixelSize: Tokens.fontBody
                 font.weight: Font.DemiBold
             }
 
@@ -87,13 +88,13 @@ Rectangle {
             text: Media.artist
             color: Theme.textDim
             elide: Text.ElideRight
-            font.pixelSize: 11
+            font.pixelSize: Tokens.fontCaption
         }
 
         Rectangle {
             width: parent.width
             height: 3
-            radius: 1.5
+            radius: Tokens.radiusHairline
             color: Theme.faint
             visible: Media.player !== null
 
@@ -115,9 +116,9 @@ Rectangle {
     Row {
         id: controls
         anchors.right: parent.right
-        anchors.rightMargin: 12
+        anchors.rightMargin: Tokens.marginMedium
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 8
+        spacing: Tokens.spacingItem
         visible: Media.player !== null
 
         MediaButton {
@@ -130,7 +131,7 @@ Rectangle {
         Rectangle {
             width: 32
             height: 32
-            radius: 16
+            radius: Tokens.radiusMedia
             color: Theme.accent
 
             Label {
@@ -139,7 +140,7 @@ Rectangle {
                 text: Media.playing ? "󰏤" : "󰐊"
                 color: "black"
                 font.family: "JetBrainsMono Nerd Font"
-                font.pixelSize: 16
+                font.pixelSize: Tokens.fontSubtitle
             }
 
             MouseArea {

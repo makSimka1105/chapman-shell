@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 
 Rectangle {
@@ -15,7 +16,7 @@ Rectangle {
 
     Behavior on color {
         ColorAnimation {
-            duration: 160
+            duration: Tokens.durationFast
         }
     }
 
@@ -29,9 +30,9 @@ Rectangle {
 
         Behavior on x {
             NumberAnimation {
-                duration: 220
+                duration: Tokens.durationPress
                 easing.type: Easing.OutBack
-                easing.overshoot: 1.4
+                easing.overshoot: Tokens.overshootMedium
             }
         }
     }

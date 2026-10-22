@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -37,7 +38,7 @@ Item {
             target: root
             property: "arrival"
             to: 1
-            duration: 460
+            duration: Tokens.durationEntrance
             easing.type: Easing.OutBack
             easing.overshoot: 1.8
         }
@@ -45,13 +46,13 @@ Item {
 
     Label {
         anchors.left: parent.left
-        anchors.leftMargin: 14
+        anchors.leftMargin: Tokens.marginRow
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 6
+        anchors.bottomMargin: Tokens.marginTight
         visible: root.modelData.header === true
         text: root.modelData.title
         color: Theme.textDim
-        font.pixelSize: 12
+        font.pixelSize: Tokens.fontSmall
         font.weight: Font.DemiBold
     }
 
@@ -62,16 +63,16 @@ Item {
 
         Behavior on scale {
             NumberAnimation {
-                duration: 230
+                duration: Tokens.durationFocus
                 easing.type: Easing.OutBack
-                easing.overshoot: 3
+                easing.overshoot: Tokens.overshootSnappy
             }
         }
 
         ResultIcon {
             id: icon
             anchors.left: parent.left
-            anchors.leftMargin: 12
+            anchors.leftMargin: Tokens.marginMedium
             anchors.verticalCenter: parent.verticalCenter
             width: 32
             height: 32
@@ -81,25 +82,25 @@ Item {
         Label {
             id: name
             anchors.left: icon.right
-            anchors.leftMargin: 14
+            anchors.leftMargin: Tokens.marginRow
             anchors.verticalCenter: parent.verticalCenter
             width: Math.min(implicitWidth, parent.width * 0.5)
             text: root.modelData.title
             elide: Text.ElideRight
-            font.pixelSize: 16
+            font.pixelSize: Tokens.fontSubtitle
             font.weight: Font.Medium
         }
 
         Label {
             anchors.left: name.right
-            anchors.leftMargin: 10
+            anchors.leftMargin: Tokens.marginInner
             anchors.right: parent.right
-            anchors.rightMargin: 14
+            anchors.rightMargin: Tokens.marginRow
             anchors.baseline: name.baseline
             text: root.armed ? "Press Enter again to confirm" : root.modelData.subtitle ?? ""
             color: root.armed ? Theme.warning : Theme.textDim
             elide: Text.ElideRight
-            font.pixelSize: 13
+            font.pixelSize: Tokens.fontBody
         }
 
         MouseArea {

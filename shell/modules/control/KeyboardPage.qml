@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -7,7 +8,7 @@ Column {
 
     signal back
 
-    spacing: 4
+    spacing: Tokens.spacingSnug
 
     PageHeader {
         width: parent.width

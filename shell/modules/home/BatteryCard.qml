@@ -1,12 +1,14 @@
 import QtQuick
 import Quickshell.Bluetooth
 import Quickshell.Services.UPower
+import qs.core
 import qs.services
 import qs.widgets
 
 Item {
     id: root
 
+    readonly property real podSize: 30
     readonly property real level: Status.batteryLevel
     readonly property bool pair: Math.round(Pods.left * 100) === Math.round(Pods.right * 100) && Pods.leftCharging === Pods.rightCharging
     readonly property var devices: (Bluetooth.defaultAdapter?.devices.values ?? []).filter(device => device.connected && device.batteryAvailable && !device.name.toLowerCase().includes("airpods"))
@@ -49,7 +51,7 @@ Item {
         Column {
             id: laptop
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 8
+            spacing: Tokens.spacingItem
 
             Ring {
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -66,20 +68,20 @@ Item {
             Row {
                 id: caption
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 6
+                spacing: Tokens.spacingSmall
 
                 Glyph {
                     anchors.verticalCenter: parent.verticalCenter
                     text: root.current.glyph
                     color: PowerProfiles.profile === PowerProfile.Performance ? Theme.warning : Theme.accent
-                    font.pixelSize: 16
+                    font.pixelSize: Tokens.fontSubtitle
                 }
 
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
                     text: root.caption()
                     color: Theme.textDim
-                    font.pixelSize: 13
+                    font.pixelSize: Tokens.fontBody
                 }
 
                 HoverHandler {
@@ -90,33 +92,33 @@ Item {
 
         Column {
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 14
+            spacing: Tokens.spacingLarge
             visible: Pods.available || root.devices.length > 0
 
             Row {
                 visible: Pods.available && root.pair
-                spacing: 8
+                spacing: Tokens.spacingItem
 
                 FillIcon {
                     anchors.verticalCenter: parent.verticalCenter
                     source: Qt.resolvedUrl("../../icons/pods.svg")
                     level: Pods.left
                     tone: root.tone(Pods.left, Pods.leftCharging)
-                    size: 30
+                    size: root.podSize
                 }
 
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
                     text: root.percent(Pods.left, Pods.leftCharging)
                     color: Pods.leftCharging ? Theme.charge : Theme.text
-                    font.pixelSize: 16
+                    font.pixelSize: Tokens.fontSubtitle
                     font.weight: Font.DemiBold
                 }
             }
 
             Row {
                 visible: Pods.available && !root.pair
-                spacing: 8
+                spacing: Tokens.spacingItem
 
                 FillIcon {
                     anchors.verticalCenter: parent.verticalCenter
@@ -124,14 +126,14 @@ Item {
                     part: "left"
                     level: Pods.left
                     tone: root.tone(Pods.left, Pods.leftCharging)
-                    size: 30
+                    size: root.podSize
                 }
 
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
                     text: root.percent(Pods.left, Pods.leftCharging)
                     color: Pods.leftCharging ? Theme.charge : Theme.text
-                    font.pixelSize: 14
+                    font.pixelSize: Tokens.fontMedium
                     font.weight: Font.DemiBold
                 }
 
@@ -141,34 +143,34 @@ Item {
                     part: "right"
                     level: Pods.right
                     tone: root.tone(Pods.right, Pods.rightCharging)
-                    size: 30
+                    size: root.podSize
                 }
 
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
                     text: root.percent(Pods.right, Pods.rightCharging)
                     color: Pods.rightCharging ? Theme.charge : Theme.text
-                    font.pixelSize: 14
+                    font.pixelSize: Tokens.fontMedium
                     font.weight: Font.DemiBold
                 }
             }
 
             Row {
                 visible: Pods.available && Pods.box > 0
-                spacing: 8
+                spacing: Tokens.spacingItem
 
                 FillIcon {
                     anchors.verticalCenter: parent.verticalCenter
                     source: Qt.resolvedUrl("../../icons/case.svg")
                     level: Pods.box
                     tone: root.tone(Pods.box)
-                    size: 30
+                    size: root.podSize
                 }
 
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
                     text: Math.round(Pods.box * 100) + "%"
-                    font.pixelSize: 14
+                    font.pixelSize: Tokens.fontMedium
                     font.weight: Font.DemiBold
                 }
             }
@@ -179,13 +181,13 @@ Item {
                 Row {
                     required property var modelData
 
-                    spacing: 8
+                    spacing: Tokens.spacingItem
 
                     Glyph {
                         anchors.verticalCenter: parent.verticalCenter
                         text: "󰂯"
                         color: parent.modelData.battery < 0.2 ? Theme.warning : Theme.accent
-                        font.pixelSize: 18
+                        font.pixelSize: Tokens.fontIcon
                     }
 
                     Label {
@@ -193,13 +195,13 @@ Item {
                         width: 70
                         text: parent.modelData.name
                         elide: Text.ElideRight
-                        font.pixelSize: 13
+                        font.pixelSize: Tokens.fontBody
                     }
 
                     Label {
                         anchors.verticalCenter: parent.verticalCenter
                         text: Math.round(parent.modelData.battery * 100) + "%"
-                        font.pixelSize: 14
+                        font.pixelSize: Tokens.fontMedium
                         font.weight: Font.DemiBold
                     }
                 }

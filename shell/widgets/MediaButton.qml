@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 
 Label {
@@ -11,12 +12,12 @@ Label {
     text: glyph
     color: !enabled ? Theme.faint : area.containsMouse ? Theme.accent : Theme.text
     font.family: "JetBrainsMono Nerd Font"
-    font.pixelSize: 16
+    font.pixelSize: Tokens.fontSubtitle
 
     MouseArea {
         id: area
         anchors.fill: parent
-        anchors.margins: -6
+        anchors.margins: Tokens.hitAreaMargin
         hoverEnabled: true
         enabled: root.enabled
         onClicked: root.clicked()

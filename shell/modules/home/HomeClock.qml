@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -20,6 +21,6 @@ Column {
     Label {
         text: clock.date.toLocaleDateString(Qt.locale("en_US"), "dddd, MMMM d")
         color: Theme.textDim
-        font.pixelSize: 14
+        font.pixelSize: Tokens.fontMedium
     }
 }

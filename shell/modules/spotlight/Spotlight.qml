@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -20,7 +21,7 @@ PanelWindow {
     readonly property real rowHeight: 52
     readonly property real headerHeight: 28
     readonly property int visibleRows: 8
-    readonly property real radius: 26
+    readonly property real radius: Tokens.radiusPanel
     readonly property real gap: 12
 
     SpotlightSearch {
@@ -141,9 +142,9 @@ PanelWindow {
 
         Behavior on openT {
             NumberAnimation {
-                duration: root.revealed ? 520 : 150
+                duration: root.revealed ? Tokens.durationReveal : Tokens.durationQuick
                 easing.type: root.revealed ? Easing.OutBack : Easing.OutCubic
-                easing.overshoot: 1.5
+                easing.overshoot: Tokens.overshootStrong
             }
         }
 
@@ -151,7 +152,7 @@ PanelWindow {
             NumberAnimation {
                 duration: 420
                 easing.type: Easing.OutBack
-                easing.overshoot: 1
+                easing.overshoot: Tokens.overshootMild
             }
         }
 
@@ -182,9 +183,9 @@ PanelWindow {
 
             Behavior on height {
                 NumberAnimation {
-                    duration: 460
+                    duration: Tokens.durationEntrance
                     easing.type: root.showPreview ? Easing.OutBack : Easing.OutCubic
-                    easing.overshoot: 1.2
+                    easing.overshoot: Tokens.overshootSoft
                 }
             }
 
@@ -225,9 +226,9 @@ PanelWindow {
 
                 Rectangle {
                     anchors.top: parent.top
-                    anchors.topMargin: 18
+                    anchors.topMargin: Tokens.marginPanel
                     anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 18
+                    anchors.bottomMargin: Tokens.marginPanel
                     x: root.compactWidth
                     width: 1
                     color: Qt.alpha(Theme.text, 0.08)

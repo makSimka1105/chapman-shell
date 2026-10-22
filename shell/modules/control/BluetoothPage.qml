@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell.Bluetooth
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -42,7 +43,7 @@ Column {
         return device.paired ? "Paired" : "New device";
     }
 
-    spacing: 2
+    spacing: Tokens.spacingHairline
     Component.onCompleted: if (adapter?.enabled) adapter.discovering = true
     Component.onDestruction: if (adapter) adapter.discovering = false
 
@@ -58,12 +59,12 @@ Column {
     Label {
         visible: root.devices.length === 0
         width: parent.width
-        height: 42
+        height: Tokens.listRowHeight
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         text: root.adapter?.enabled ? "Searching…" : "Bluetooth is off"
         color: Theme.textDim
-        font.pixelSize: 14
+        font.pixelSize: Tokens.fontMedium
         font.weight: Font.Medium
     }
 
@@ -75,7 +76,7 @@ Column {
             readonly property bool airpods: modelData.name.toLowerCase().includes("airpods")
 
             width: root.width
-            height: 42
+            height: Tokens.listRowHeight
             glyph: root.glyphs[modelData.icon] ?? "󰂯"
             title: modelData.name
             subtitle: root.status(modelData)

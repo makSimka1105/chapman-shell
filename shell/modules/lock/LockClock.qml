@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -22,6 +23,6 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
         text: Qt.formatDateTime(clock.date, "dddd, MMMM d")
         color: Theme.textDim
-        font.pixelSize: 24
+        font.pixelSize: Tokens.fontDisplay
     }
 }

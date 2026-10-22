@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -17,7 +18,7 @@ Rectangle {
 
     implicitWidth: grid.width + 32
     implicitHeight: column.height + 28
-    radius: 18
+    radius: Tokens.radiusCard
     color: Theme.card
 
     SystemClock {
@@ -28,13 +29,13 @@ Rectangle {
     Column {
         id: column
         anchors.centerIn: parent
-        spacing: 4
+        spacing: Tokens.spacingSnug
 
         Label {
             leftPadding: (root.cellWidth - 14) / 2
             text: root.locale.standaloneMonthName(root.month).toUpperCase()
             color: Theme.accent
-            font.pixelSize: 11
+            font.pixelSize: Tokens.fontCaption
             font.weight: Font.Bold
             font.letterSpacing: 0.5
         }
@@ -54,7 +55,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignHCenter
                     text: root.locale.dayName((index + 1) % 7, Locale.NarrowFormat)
                     color: Theme.textDim
-                    font.pixelSize: 10
+                    font.pixelSize: Tokens.fontMicro
                     font.weight: Font.DemiBold
                 }
             }
@@ -84,7 +85,7 @@ Rectangle {
                         visible: parent.day > 0
                         text: parent.day
                         color: parent.isToday ? "black" : index % 7 > 4 ? Theme.textDim : Theme.text
-                        font.pixelSize: 12
+                        font.pixelSize: Tokens.fontSmall
                         font.weight: parent.isToday ? Font.Bold : Font.Medium
                     }
                 }

@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 
 Rectangle {
@@ -30,13 +31,13 @@ Rectangle {
 
     Behavior on opacity {
         NumberAnimation {
-            duration: 160
+            duration: Tokens.durationFast
         }
     }
 
     Behavior on scale {
         NumberAnimation {
-            duration: 260
+            duration: Tokens.durationMove
             easing.type: Easing.OutBack
             easing.overshoot: 2
         }
@@ -69,8 +70,8 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: 6
-        spacing: 2
+        anchors.margins: Tokens.marginTight
+        spacing: Tokens.spacingHairline
 
         Repeater {
             model: root.entries
@@ -81,7 +82,7 @@ Rectangle {
 
                 width: parent.width
                 height: root.rowHeight
-                radius: 12
+                radius: Tokens.radiusChip
                 glyph: modelData.glyph
                 title: modelData.title
                 trailing: active ? "󰄬" : ""

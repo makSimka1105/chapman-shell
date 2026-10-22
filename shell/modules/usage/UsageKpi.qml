@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -11,7 +12,7 @@ Rectangle {
     property color tint: Theme.text
 
     implicitHeight: column.implicitHeight + 24
-    radius: 16
+    radius: Tokens.radiusMedia
     color: Theme.card
 
     Column {
@@ -20,12 +21,12 @@ Rectangle {
         x: 14
         y: 12
         width: parent.width - 28
-        spacing: 3
+        spacing: Tokens.spacingTight
 
         Label {
             text: root.title.toUpperCase()
             color: Theme.textDim
-            font.pixelSize: 11
+            font.pixelSize: Tokens.fontCaption
             font.weight: Font.DemiBold
             font.letterSpacing: 1
         }
@@ -33,7 +34,7 @@ Rectangle {
         Label {
             text: root.value
             color: root.tint
-            font.pixelSize: 24
+            font.pixelSize: Tokens.fontDisplay
             font.weight: Font.Bold
         }
 
@@ -41,7 +42,7 @@ Rectangle {
             width: parent.width
             text: root.note
             color: Theme.textDim
-            font.pixelSize: 12
+            font.pixelSize: Tokens.fontSmall
             elide: Text.ElideRight
         }
     }

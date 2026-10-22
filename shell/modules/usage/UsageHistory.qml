@@ -1,4 +1,5 @@
 import QtQuick
+import qs.core
 import qs.services
 import qs.widgets
 
@@ -37,7 +38,7 @@ Column {
         return metric === "eq" ? Usage.moneyText(value) : Usage.tokensText(value);
     }
 
-    spacing: 12
+    spacing: Tokens.spacingMedium
 
     component Chip: Rectangle {
         id: chip
@@ -49,7 +50,7 @@ Column {
 
         width: chipLabel.width + 18
         height: 24
-        radius: 12
+        radius: Tokens.radiusChip
         color: active ? Theme.text : Theme.faint
 
         Label {
@@ -58,7 +59,7 @@ Column {
             anchors.centerIn: parent
             text: chip.text
             color: chip.active ? "black" : Theme.text
-            font.pixelSize: 12
+            font.pixelSize: Tokens.fontSmall
             font.weight: Font.DemiBold
         }
 
@@ -70,7 +71,7 @@ Column {
 
     Row {
         width: parent.width
-        spacing: 8
+        spacing: Tokens.spacingItem
 
         Repeater {
             model: root.cards
@@ -89,7 +90,7 @@ Column {
     Row {
         width: parent.width
         height: Math.max(leftCard.implicitHeight, rightCard.implicitHeight)
-        spacing: 12
+        spacing: Tokens.spacingMedium
 
         UsageCard {
             id: leftCard
@@ -98,7 +99,7 @@ Column {
             title: "По месяцам"
 
             Row {
-                spacing: 6
+                spacing: Tokens.spacingSmall
 
                 Repeater {
                     model: root.metrics
@@ -127,7 +128,7 @@ Column {
             Label {
                 text: "* месяц не закончен, история пишется при каждом опросе"
                 color: Theme.textDim
-                font.pixelSize: 11
+                font.pixelSize: Tokens.fontCaption
             }
         }
 
@@ -138,7 +139,7 @@ Column {
             title: "Сравнить два месяца"
 
             Row {
-                spacing: 4
+                spacing: Tokens.spacingSnug
 
                 Repeater {
                     model: Usage.months
@@ -155,7 +156,7 @@ Column {
             }
 
             Row {
-                spacing: 4
+                spacing: Tokens.spacingSnug
 
                 Repeater {
                     model: Usage.months
@@ -184,7 +185,7 @@ Column {
 
                     Label {
                         text: compareRow.modelData.name
-                        font.pixelSize: 12
+                        font.pixelSize: Tokens.fontSmall
                         font.weight: compareRow.modelData.name === "Всего" ? Font.Bold : Font.Normal
                     }
 
@@ -196,14 +197,14 @@ Column {
                             width: 70
                             text: root.metricText(compareRow.modelData.a)
                             horizontalAlignment: Text.AlignRight
-                            font.pixelSize: 12
+                            font.pixelSize: Tokens.fontSmall
                         }
 
                         Label {
                             width: 70
                             text: root.metricText(compareRow.modelData.b)
                             horizontalAlignment: Text.AlignRight
-                            font.pixelSize: 12
+                            font.pixelSize: Tokens.fontSmall
                         }
 
                         Label {
@@ -211,7 +212,7 @@ Column {
                             text: Usage.deltaText(compareRow.modelData.b, compareRow.modelData.a)
                             horizontalAlignment: Text.AlignRight
                             color: Theme.textDim
-                            font.pixelSize: 12
+                            font.pixelSize: Tokens.fontSmall
                         }
                     }
                 }
