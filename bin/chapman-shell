@@ -25,6 +25,7 @@ DANK_SYNC = Path.home() / ".local/bin/dank-themes-sync"
 UNIT = "chapman-shell.service"
 GTK4_CSS = Path.home() / ".config/gtk-4.0/gtk.css"
 DEFAULT_THEME = "glass"
+DANK_MODES = ("dark", "light", "default")
 PLACEHOLDER = re.compile(r"\{\{([\w.]+)\}\}")
 SWATCHES = ["primary", "surface", "on_surface", "secondary", "tertiary", "error"]
 ZED_ALPHA_GAP = 0.12
@@ -77,8 +78,12 @@ def render(template, values):
 
 
 def write_colors(theme):
-    palette = {f"color{index}": color for index, color in enumerate(theme["terminal"]["palette"])}
-    payload = {"mode": theme["variant"], "colors": {theme["variant"]: theme["colors"]}, "dank16": palette}
+    palette = {
+        f"color{index}": {mode: color for mode in DANK_MODES}
+        for index, color in enumerate(theme["terminal"]["palette"])
+    }
+    colors = {mode: theme["colors"] for mode in ("dark", "light")}
+    payload = {"mode": theme["variant"], "colors": colors, "dank16": palette}
     COLORS.write_text(json.dumps(payload, indent=2) + "\n")
 
 
