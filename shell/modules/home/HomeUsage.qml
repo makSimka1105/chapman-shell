@@ -19,7 +19,7 @@ Item {
             model: [
                 { label: "5h", value: Usage.fiveHour, text: Math.round(Usage.fiveHour * 100) + "%" },
                 { label: "7d", value: Usage.sevenDay, text: Math.round(Usage.sevenDay * 100) + "%" },
-                { label: "OR", value: Usage.openRouterUsed, text: Usage.moneyText(Usage.openRouterSpend) }
+                { label: "OR", value: Usage.openRouterUsed, text: "$" + Usage.openRouterSpend.toFixed(2) }
             ]
 
             Row {
