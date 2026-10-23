@@ -80,4 +80,17 @@ Singleton {
     readonly property real themeDot: 18
     readonly property real wallpaperThumbWidth: 192
     readonly property real wallpaperThumbHeight: 108
+
+    readonly property real sliderHeight: 24
+    readonly property real sliderKnob: 16
+    readonly property real choiceHeight: 40
+    readonly property real settingsWidth: 1100
+    readonly property real settingsHeight: 720
+    readonly property real settingsSidebarWidth: 240
+    readonly property real settingsRowHeight: 56
+    readonly property real settingsControlWidth: 240
+    readonly property real settingsPageWidth: 720
+    readonly property real sidebarItemHeight: 38
+    readonly property real headerIconSize: 64
+    readonly property real settingsPercentWidth: 40
 }

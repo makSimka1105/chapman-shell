@@ -8,6 +8,7 @@ import qs.services
 import qs.modules.lock
 import qs.modules.notch
 import qs.modules.power
+import qs.modules.settings
 import qs.modules.wallpaper
 
 ShellRoot {
@@ -61,6 +62,22 @@ ShellRoot {
 
         function close(): void {
             powerMenu.close();
+        }
+    }
+
+    SettingsWindow {
+        id: settingsWindow
+    }
+
+    IpcHandler {
+        target: "settings"
+
+        function toggle(): void {
+            settingsWindow.toggle();
+        }
+
+        function open(section: string): void {
+            settingsWindow.open(section);
         }
     }
 

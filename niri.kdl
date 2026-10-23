@@ -6,7 +6,16 @@ binds {
     Super+Shift+P hotkey-overlay-title="Power menu" { spawn "qs" "-p" "/home/maksibon/.config/chapman-shell/shell" "ipc" "call" "power" "toggle"; }
     XF86MonBrightnessUp allow-when-locked=true { spawn-sh "brightnessctl --class=backlight set +10% && qs -p /home/maksibon/.config/chapman-shell/shell ipc call osd brightness"; }
     XF86MonBrightnessDown allow-when-locked=true { spawn-sh "brightnessctl --class=backlight set 10%- && qs -p /home/maksibon/.config/chapman-shell/shell ipc call osd brightness"; }
+    Alt+S hotkey-overlay-title="Settings" { spawn "qs" "-p" "/home/maksibon/.config/chapman-shell/shell" "ipc" "call" "settings" "toggle"; }
     Super+Shift+S hotkey-overlay-title="Screenshot: Interactive" { screenshot; }
+}
+
+window-rule {
+    match title="^chapman-settings$"
+    open-floating true
+    open-focused true
+    default-column-width { fixed 1100; }
+    default-window-height { fixed 720; }
 }
 
 include optional=true "/home/maksibon/.local/state/chapman-shell/niri.kdl"
