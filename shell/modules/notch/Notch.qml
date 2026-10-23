@@ -10,8 +10,10 @@ Item {
     property bool pinned
     readonly property string mode: state === "control" || state === "themes" || state === "search" ? state : Notifications.current ? "notification" : Osd.active && state === "rest" ? "osd" : state
 
-    readonly property size restSize: Qt.size(340, 40)
-    readonly property size homeSize: Qt.size(1400, 240)
+    readonly property int restWidth: typeof IslandConfig.data.rest.layout.width === "number" ? IslandConfig.data.rest.layout.width : IslandConfig.data.size.restWidth > 0 ? IslandConfig.data.size.restWidth : 340
+    readonly property int restHeight: IslandConfig.data.size.restHeight > 0 ? IslandConfig.data.size.restHeight : 40
+    readonly property size restSize: Qt.size(restWidth, restHeight)
+    readonly property size homeSize: Qt.size(content.homeView.implicitWidth, content.homeView.implicitHeight)
     readonly property size notificationSize: Qt.size(480, 104)
     readonly property size osdSize: Qt.size(300, 56)
     readonly property real maxHeight: 700
@@ -32,7 +34,8 @@ Item {
         })
     readonly property size goal: mode === "control" ? Qt.size(content.control.implicitWidth, content.control.implicitHeight) : mode === "themes" ? Qt.size(content.themes.implicitWidth, content.themes.implicitHeight) : mode === "search" ? Qt.size(content.searchView.implicitWidth, content.searchView.implicitHeight) : sizes[mode]
 
-    readonly property int morphDuration: 300
+    readonly property int morphDuration: Tokens.durationSlow
+    readonly property bool hoverOpen: IslandConfig.data.behavior.hoverOpen
     property real radius: radii[mode]
     property real squash: 1
     property real detach: state === "search" ? 1 : 0
@@ -76,7 +79,7 @@ Item {
 
     width: goal.width
     height: goal.height
-    onModeChanged: squashAnimation.restart()
+    onModeChanged: if (IslandConfig.data.motion.squash) squashAnimation.restart()
 
     Behavior on width {
         NumberAnimation {
@@ -144,13 +147,13 @@ Item {
 
     Timer {
         id: openDelay
-        interval: 120
+        interval: IslandConfig.data.behavior.hoverDelay
         onTriggered: if (root.state === "rest") root.state = "home"
     }
 
     Timer {
         id: closeDelay
-        interval: root.state === "control" || root.state === "themes" || root.state === "search" ? 700 : 280
+        interval: root.state === "control" || root.state === "themes" || root.state === "search" ? 700 : IslandConfig.data.behavior.closeDelay
         onTriggered: if (!root.pinned && !content.control.typing) root.state = "rest"
     }
 
@@ -159,7 +162,8 @@ Item {
         onHoveredChanged: {
             if (hovered) {
                 closeDelay.stop();
-                openDelay.restart();
+                if (root.hoverOpen)
+                    openDelay.restart();
             } else {
                 openDelay.stop();
                 closeDelay.restart();

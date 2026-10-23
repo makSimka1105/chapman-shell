@@ -13,6 +13,7 @@ Item {
     property alias control: control
     property alias themes: themes
     property alias searchView: searchView
+    property alias homeView: homeView
 
     clip: true
 
@@ -61,6 +62,7 @@ Item {
     }
 
     HomeView {
+        id: homeView
         anchors.horizontalCenter: parent.horizontalCenter
         width: notch.homeSize.width
         height: notch.homeSize.height

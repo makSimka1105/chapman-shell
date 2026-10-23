@@ -36,6 +36,7 @@ Singleton {
     readonly property real marginLarge: 20
     readonly property real marginField: 24
     readonly property real marginScreen: 32
+    readonly property real homeInsetVertical: 32.5
 
     readonly property int fontMicro: 10
     readonly property int fontCaption: 11
@@ -49,26 +50,28 @@ Singleton {
     readonly property int fontLarge: 22
     readonly property int fontDisplay: 24
 
-    readonly property int durationShakeStep: 80
-    readonly property int durationHover: 120
-    readonly property int durationQuick: 150
-    readonly property int durationFast: 160
-    readonly property int durationNormal: 200
-    readonly property int durationPress: 220
-    readonly property int durationFocus: 230
-    readonly property int durationMove: 260
-    readonly property int durationSlow: 300
-    readonly property int durationLong: 400
-    readonly property int durationEntrance: 460
-    readonly property int durationReveal: 520
-    readonly property int durationRing: 900
+    readonly property int durationShakeStep: Math.round(80 / motionSpeed)
+    readonly property int durationHover: Math.round(120 / motionSpeed)
+    readonly property int durationQuick: Math.round(150 / motionSpeed)
+    readonly property int durationFast: Math.round(160 / motionSpeed)
+    readonly property int durationNormal: Math.round(200 / motionSpeed)
+    readonly property int durationPress: Math.round(220 / motionSpeed)
+    readonly property int durationFocus: Math.round(230 / motionSpeed)
+    readonly property int durationMove: Math.round(260 / motionSpeed)
+    readonly property int durationSlow: Math.round(300 / motionSpeed)
+    readonly property int durationLong: Math.round(400 / motionSpeed)
+    readonly property int durationEntrance: Math.round(460 / motionSpeed)
+    readonly property int durationReveal: Math.round(520 / motionSpeed)
+    readonly property int durationRing: Math.round(900 / motionSpeed)
 
-    readonly property real islandDetachGap: 12
-    readonly property real overshootMild: 1
-    readonly property real overshootSoft: 1.2
-    readonly property real overshootMedium: 1.4
-    readonly property real overshootStrong: 1.5
-    readonly property real overshootSnappy: 3
+    readonly property real motionSpeed: Math.max(0.1, IslandConfig.data.motion.speed)
+    readonly property real overshootScale: IslandConfig.data.motion.overshoot
+    readonly property real islandDetachGap: IslandConfig.data.motion.detachGap
+    readonly property real overshootMild: 1 * overshootScale
+    readonly property real overshootSoft: 1.2 * overshootScale
+    readonly property real overshootMedium: 1.4 * overshootScale
+    readonly property real overshootStrong: 1.5 * overshootScale
+    readonly property real overshootSnappy: 3 * overshootScale
 
     readonly property real listRowHeight: 42
     readonly property real pageHeaderHeight: 44
@@ -93,4 +96,12 @@ Singleton {
     readonly property real sidebarItemHeight: 38
     readonly property real headerIconSize: 64
     readonly property real settingsPercentWidth: 40
+
+    readonly property real iconButtonSize: 30
+    readonly property real segmentWidth: 128
+    readonly property real segmentHeight: 34
+    readonly property real dropdownWidth: 150
+    readonly property real dropdownRowHeight: 34
+    readonly property real widgetRowHeight: 48
+    readonly property real settingsValueWidth: 64
 }

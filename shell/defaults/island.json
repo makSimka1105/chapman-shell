@@ -1,0 +1,142 @@
+{
+  "rest": {
+    "layout": {
+      "width": "fit",
+      "gap": 9,
+      "zoneGap": 16
+    },
+    "left": {
+      "justify": "start",
+      "items": [
+        {
+          "id": "workspaces",
+          "enabled": true,
+          "variant": "dots"
+        },
+        {
+          "id": "equalizer",
+          "enabled": true,
+          "grow": 1,
+          "minWidth": 40,
+          "priority": 1
+        }
+      ]
+    },
+    "center": {
+      "justify": "center",
+      "items": [
+        {
+          "id": "clock",
+          "enabled": true,
+          "variant": "time"
+        }
+      ]
+    },
+    "right": {
+      "justify": "end",
+      "items": [
+        {
+          "id": "layout",
+          "enabled": true,
+          "variant": "code"
+        },
+        {
+          "id": "bluetooth",
+          "enabled": true,
+          "variant": "icon"
+        },
+        {
+          "id": "wifi",
+          "enabled": true,
+          "variant": "icon"
+        },
+        {
+          "id": "battery",
+          "enabled": true,
+          "variant": "icon"
+        }
+      ]
+    }
+  },
+  "home": {
+    "grid": {
+      "columns": 6,
+      "gap": 14,
+      "rowGap": 12,
+      "width": 1400,
+      "justify": "between"
+    },
+    "items": [
+      {
+        "id": "focus",
+        "enabled": true,
+        "col": 0,
+        "span": 1
+      },
+      {
+        "id": "workspaces",
+        "enabled": true,
+        "col": 0,
+        "span": 1
+      },
+      {
+        "id": "usage",
+        "enabled": true,
+        "col": 0,
+        "span": 1
+      },
+      {
+        "id": "battery",
+        "enabled": true,
+        "col": 1,
+        "span": 1
+      },
+      {
+        "id": "media",
+        "enabled": true,
+        "col": 1,
+        "span": 1
+      },
+      {
+        "id": "clock",
+        "enabled": true,
+        "col": 2,
+        "span": 1
+      },
+      {
+        "id": "calendar",
+        "enabled": true,
+        "col": 3,
+        "span": 1
+      },
+      {
+        "id": "links",
+        "enabled": true,
+        "col": 4,
+        "span": 1
+      },
+      {
+        "id": "tiles",
+        "enabled": true,
+        "col": 5,
+        "span": 1
+      }
+    ]
+  },
+  "motion": {
+    "speed": 1.0,
+    "overshoot": 1.0,
+    "detachGap": 12,
+    "squash": true
+  },
+  "behavior": {
+    "hoverOpen": true,
+    "hoverDelay": 120,
+    "closeDelay": 280,
+    "mediaInRest": true
+  },
+  "size": {
+    "restWidth": 0,
+    "restHeight": 0
+  }
+}
