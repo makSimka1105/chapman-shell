@@ -12,7 +12,7 @@ Column {
 
     Label {
         x: Tokens.marginRow
-        text: root.group.title
+        text: root.group.title ?? ""
         visible: text !== ""
         font.pixelSize: Tokens.fontSmall
         font.weight: Font.DemiBold

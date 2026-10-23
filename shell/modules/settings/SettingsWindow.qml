@@ -3,19 +3,25 @@ import Quickshell
 import qs.core
 import qs.services
 import qs.widgets
+import qs.modules.settings.island
 
 FloatingWindow {
     id: root
 
     property string currentKey: "appearance"
+    property string currentPageKey
     readonly property var section: catalog.sections.find(candidate => candidate.key === currentKey) ?? catalog.sections[0]
+    readonly property var activePage: section.pages.find(candidate => candidate.key === currentPageKey) ?? section.pages[0] ?? null
+    readonly property var pageOptions: section.pages.map(entry => ({ id: entry.key, label: entry.title }))
 
     function toggle() {
         visible = !visible;
     }
 
-    function open(key) {
-        currentKey = key;
+    function open(target) {
+        const parts = target.split("/");
+        currentKey = parts[0];
+        currentPageKey = parts[1] ?? "";
         visible = true;
     }
 
@@ -74,8 +80,37 @@ FloatingWindow {
                 section: root.section
             }
 
+            Item {
+                width: parent.width
+                height: pageBar.height
+                visible: root.activePage !== null
+
+                SegmentedControl {
+                    id: pageBar
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    options: root.pageOptions
+                    current: root.activePage?.key ?? ""
+                    onPicked: id => root.currentPageKey = id
+                }
+
+                IconButton {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    glyph: "󰑐"
+                    label: "Сбросить"
+                    onClicked: IslandConfig.reset(root.activePage.reset)
+                }
+            }
+
+            Loader {
+                width: page.width
+                active: root.activePage?.file !== undefined
+                visible: active
+                source: active ? root.activePage.file : ""
+            }
+
             Repeater {
-                model: root.section.groups
+                model: root.activePage?.groups ?? root.section.groups
 
                 SettingsGroup {
                     required property var modelData
@@ -106,6 +141,10 @@ FloatingWindow {
 
         function onCurrentKeyChanged() {
             scroller.contentY = 0;
+            entrance.restart();
+        }
+
+        function onCurrentPageKeyChanged() {
             entrance.restart();
         }
     }

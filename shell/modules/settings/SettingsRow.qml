@@ -9,6 +9,14 @@ Item {
     required property var row
     readonly property bool stacked: row.type === "choice" || row.type === "themes" || row.type === "wallpapers"
 
+    readonly property real sliderMin: row.min ?? 0
+    readonly property real sliderMax: row.max ?? 1
+
+    function sliderValue(fraction) {
+        const raw = sliderMin + fraction * (sliderMax - sliderMin);
+        return row.step ? Number((Math.round(raw / row.step) * row.step).toFixed(3)) : raw;
+    }
+
     implicitHeight: stacked ? stack.implicitHeight + 2 * Tokens.marginRow : Tokens.settingsRowHeight
 
     Column {
@@ -69,15 +77,15 @@ Item {
             Slider {
                 width: Tokens.settingsControlWidth
                 anchors.verticalCenter: parent.verticalCenter
-                value: root.row.read()
-                onMoved: value => root.row.write(value)
+                value: (root.row.read() - root.sliderMin) / (root.sliderMax - root.sliderMin)
+                onMoved: value => root.row.write(root.sliderValue(value))
             }
 
             Label {
-                width: Tokens.settingsPercentWidth
+                width: root.row.format ? Tokens.settingsValueWidth : Tokens.settingsPercentWidth
                 anchors.verticalCenter: parent.verticalCenter
                 horizontalAlignment: Text.AlignRight
-                text: Math.round(root.row.read() * 100) + "%"
+                text: root.row.format ? root.row.format(root.row.read()) : Math.round(root.row.read() * 100) + "%"
                 font.pixelSize: Tokens.fontBody
                 color: Theme.textDim
             }

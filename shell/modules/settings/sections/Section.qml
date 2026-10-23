@@ -7,4 +7,5 @@ QtObject {
     property string subtitle
     property bool ready: true
     property var groups: []
+    property var pages: []
 }
