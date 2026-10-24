@@ -18,6 +18,8 @@ Singleton {
     property string problem
     property var addresses: ({})
     property int scanners: 0
+    property var revealed: null
+    property string revealedPsk
 
     function bar(network) {
         return bars[Math.min(3, Math.floor(network.signalStrength * 4))];
@@ -68,6 +70,13 @@ Singleton {
         return "Wrong password, try again";
     }
 
+    function reveal(network) {
+        revealedPsk = "";
+        revealed = revealed === network ? null : network;
+        if (revealed)
+            pskProcess.running = true;
+    }
+
     function scan(on) {
         scanners += on ? 1 : -1;
     }
@@ -98,6 +107,14 @@ Singleton {
         function onConnectedChanged() {
             if (root.pending.connected)
                 root.pending = null;
+        }
+    }
+
+    Process {
+        id: pskProcess
+        command: ["nmcli", "-s", "-g", "802-11-wireless-security.psk", "connection", "show", "uuid", (root.revealed?.nmSettings ?? [])[0]?.uuid ?? ""]
+        stdout: StdioCollector {
+            onStreamFinished: root.revealedPsk = text.trim()
         }
     }
 

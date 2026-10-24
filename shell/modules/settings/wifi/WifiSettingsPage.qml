@@ -26,6 +26,7 @@ Column {
     Component.onCompleted: Wifi.scan(true)
     Component.onDestruction: {
         Wifi.cancel();
+        Wifi.revealed = null;
         Wifi.scan(false);
     }
 
@@ -67,7 +68,7 @@ Column {
 
             Label {
                 width: parent.width
-                text: root.current ? [WifiSecurityType.toString(root.current.security), Math.round(root.current.signalStrength * 100) + "%", (Wifi.addresses["IP4.ADDRESS"] ?? "").split("/")[0]].filter(part => part).join("  ·  ") : ""
+                text: root.current && Wifi.revealed === root.current ? "Пароль: " + Wifi.revealedPsk : root.current ? [WifiSecurityType.toString(root.current.security), Math.round(root.current.signalStrength * 100) + "%", (Wifi.addresses["IP4.ADDRESS"] ?? "").split("/")[0]].filter(part => part).join("  ·  ") : ""
                 elide: Text.ElideRight
                 font.pixelSize: Tokens.fontCaption
                 color: Theme.textDim
@@ -80,6 +81,11 @@ Column {
             anchors.rightMargin: Tokens.marginRow
             anchors.verticalCenter: parent.verticalCenter
             spacing: Tokens.spacingCompact
+
+            IconButton {
+                glyph: Wifi.revealed === root.current ? "󰈉" : "󰈈"
+                onClicked: Wifi.reveal(root.current)
+            }
 
             IconButton {
                 glyph: "󰖪"

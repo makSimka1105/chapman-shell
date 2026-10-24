@@ -56,7 +56,7 @@ Column {
 
             Label {
                 width: parent.width
-                text: [root.network.stateChanging ? "Подключение…" : root.network.connected ? "Подключено" : root.network.known ? "Сохранена" : "", WifiSecurityType.toString(root.network.security), Math.round(root.network.signalStrength * 100) + "%"].filter(part => part).join("  ·  ")
+                text: Wifi.revealed === root.network ? "Пароль: " + Wifi.revealedPsk : [root.network.stateChanging ? "Подключение…" : root.network.connected ? "Подключено" : root.network.known ? "Сохранена" : "", WifiSecurityType.toString(root.network.security), Math.round(root.network.signalStrength * 100) + "%"].filter(part => part).join("  ·  ")
                 elide: Text.ElideRight
                 font.pixelSize: Tokens.fontCaption
                 color: Theme.textDim
@@ -69,6 +69,12 @@ Column {
             anchors.rightMargin: Tokens.marginRow
             anchors.verticalCenter: parent.verticalCenter
             spacing: Tokens.spacingCompact
+
+            IconButton {
+                visible: root.network.known && root.secured
+                glyph: Wifi.revealed === root.network ? "󰈉" : "󰈈"
+                onClicked: Wifi.reveal(root.network)
+            }
 
             IconButton {
                 visible: root.secured
