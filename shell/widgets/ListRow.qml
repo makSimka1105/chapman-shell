@@ -13,6 +13,7 @@ Rectangle {
     property bool busy
 
     signal clicked
+    signal secondaryClicked
 
     height: 48
     radius: Tokens.radiusRow
@@ -84,6 +85,7 @@ Rectangle {
         id: area
         anchors.fill: parent
         hoverEnabled: true
-        onClicked: root.clicked()
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: mouse => mouse.button === Qt.RightButton ? root.secondaryClicked() : root.clicked()
     }
 }

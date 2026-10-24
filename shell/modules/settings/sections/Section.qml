@@ -8,4 +8,5 @@ QtObject {
     property bool ready: true
     property var groups: []
     property var pages: []
+    property string file
 }

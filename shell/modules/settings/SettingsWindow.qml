@@ -4,6 +4,7 @@ import qs.core
 import qs.services
 import qs.widgets
 import qs.modules.settings.island
+import qs.modules.settings.wifi
 
 FloatingWindow {
     id: root
@@ -104,9 +105,10 @@ FloatingWindow {
 
             Loader {
                 width: page.width
-                active: root.activePage?.file !== undefined
+                readonly property string file: root.activePage?.file ?? root.section.file
+                active: file !== ""
                 visible: active
-                source: active ? root.activePage.file : ""
+                source: file
             }
 
             Repeater {
