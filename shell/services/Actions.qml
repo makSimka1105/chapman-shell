@@ -13,7 +13,6 @@ Singleton {
         { title: "Themes", subtitle: "Desktop themes with #", glyph: "󰏘", keywords: ["theme", "colors", "wallpaper"], prefill: "#" },
         { title: "Clipboard History", subtitle: "Copied items with :", glyph: "\uf0ea", keywords: ["clipboard", "paste", "copy"], prefill: ":" },
         { title: "Screenshot", subtitle: "Select an area", glyph: "󰹑", keywords: ["capture", "screen"], command: ["sh", "-c", "sleep 0.3; niri msg action screenshot"] },
-        { title: "Switch to DMS", subtitle: "Shell", glyph: "󰍹", keywords: ["shell", "dms"], command: [home + "/.local/bin/shell", "dms"] },
         { title: "Suspend", subtitle: "System", glyph: "󰤄", keywords: ["sleep"], command: ["systemctl", "suspend"] },
         { title: "Log Out", subtitle: "System", glyph: "󰍃", keywords: ["logout", "exit", "quit"], command: ["niri", "msg", "action", "quit", "--skip-confirmation"], confirm: true },
         { title: "Restart", subtitle: "System", glyph: "󰜉", keywords: ["reboot"], command: ["systemctl", "reboot"], confirm: true },

@@ -29,7 +29,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = [ cfg.package ];
+    home.packages = [ cfg.package cfg.quickshell ];
 
     xdg.configFile."chapman-shell/niri.kdl".source = "${cfg.package}/share/chapman-shell/niri.kdl";
 

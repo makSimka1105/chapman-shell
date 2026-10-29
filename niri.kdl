@@ -1,5 +1,3 @@
-binds {
-    Super+S hotkey-overlay-title="Spotlight" { spawn "chapman-shell" "ipc" "spotlight" "toggle"; }
     Alt+V hotkey-overlay-title="Clipboard history" { spawn "chapman-shell" "ipc" "spotlight" "toggleQuery" ":"; }
     Super+Shift+T hotkey-overlay-title="Themes" { spawn "chapman-shell" "ipc" "notch" "themes"; }
     Super+P hotkey-overlay-title="Power menu" { spawn "chapman-shell" "ipc" "power" "toggle"; }

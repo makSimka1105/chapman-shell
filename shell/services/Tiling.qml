@@ -6,7 +6,7 @@ import Quickshell.Io
 Singleton {
     id: root
 
-    readonly property string tool: Quickshell.env("HOME") + "/.config/niri/scripts/niri-layout"
+    readonly property string tool: "niri-layout"
     readonly property var presets: [
         { id: "halves", label: "Strip", glyph: "󰕴" },
         { id: "grid", label: "Grid", glyph: "󰕮" },
