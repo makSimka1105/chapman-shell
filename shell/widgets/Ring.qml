@@ -12,6 +12,8 @@ Item {
     property string text: Math.round(value * 100) + "%"
     property real fontSize: 12
     property bool pulsing: false
+    property real startAngle: -Math.PI / 2
+    property real sweep: 2 * Math.PI
 
     implicitWidth: 44
     implicitHeight: 44
@@ -52,13 +54,13 @@ Item {
             ctx.lineCap = "round";
             ctx.strokeStyle = root.trackColor;
             ctx.beginPath();
-            ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+            ctx.arc(cx, cy, radius, root.startAngle, root.startAngle + root.sweep);
             ctx.stroke();
             if (root.value <= 0)
                 return;
             ctx.strokeStyle = root.fillColor;
             ctx.beginPath();
-            ctx.arc(cx, cy, radius, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * Math.min(1, root.value));
+            ctx.arc(cx, cy, radius, root.startAngle, root.startAngle + root.sweep * Math.min(1, root.value));
             ctx.stroke();
         }
     }

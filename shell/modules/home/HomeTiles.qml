@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import qs.core
 import qs.services
 import qs.widgets
@@ -8,14 +9,8 @@ Column {
 
     required property string picker
     readonly property bool present: true
-    readonly property int notificationCount: Notifications.history.length
-    readonly property string notificationApps: {
-        const names = [];
-        for (const item of Notifications.history)
-            if (item.appName && names.indexOf(item.appName) < 0)
-                names.push(item.appName);
-        return names.slice(0, 2).join(", ");
-    }
+    readonly property string secondOutput: "HDMI-A-1"
+    readonly property bool secondOn: Niri.workspaces.some(workspace => workspace.output === secondOutput)
     readonly property string tilingLabel: ({ halves: "Strip", grid: "Grid", tabs: "Tabs", float: "Float" })[Tiling.preset] ?? "Tiling"
 
     signal pageRequested(string page)
@@ -58,13 +53,21 @@ Column {
             captionColor: KeepAwake.active ? Theme.text : Theme.textDim
             onClicked: KeepAwake.toggle()
         }
-    }
 
-    HomeLink {
-        glyph: root.notificationCount === 0 ? "󰂛" : "󰂚"
-        title: root.notificationCount === 0 ? "Quiet" : root.notificationCount + " new"
-        caption: root.notificationCount === 0 ? "No notifications" : root.notificationApps
-        tint: root.notificationCount === 0 ? Theme.textDim : Theme.accent
-        onClicked: root.pageRequested("notifications")
+        HomeTile {
+            glyph: "󰍺"
+            caption: "iPad"
+            glyphColor: root.secondOn ? Theme.accent : Theme.textDim
+            captionColor: root.secondOn ? Theme.text : Theme.textDim
+            onClicked: Spawn.run([Quickshell.env("HOME") + "/.local/bin/ipad", root.secondOn ? "off" : "on"])
+        }
+
+        HomeTile {
+            glyph: "󰒓"
+            caption: "Settings"
+            glyphColor: Theme.textDim
+            captionColor: Theme.textDim
+            onClicked: Spawn.run(["qs", "-p", Quickshell.shellDir, "ipc", "call", "settings", "toggle"])
+        }
     }
 }

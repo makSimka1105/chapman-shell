@@ -20,10 +20,10 @@ Singleton {
             five_hour: 5 * 3600000,
             seven_day: 7 * 86400000
         })
-    readonly property real fiveHour: windowUsed("claude", "five_hour")
-    readonly property real sevenDay: windowUsed("claude", "seven_day")
-    readonly property date fiveHourReset: windowReset("claude", "five_hour")
-    readonly property date sevenDayReset: windowReset("claude", "seven_day")
+    readonly property real fiveHour: subscriptionUsed("five_hour")
+    readonly property real sevenDay: subscriptionUsed("seven_day")
+    readonly property date fiveHourReset: subscriptionReset("five_hour")
+    readonly property date sevenDayReset: subscriptionReset("seven_day")
     readonly property real openRouterSpend: source("openrouter").live?.spend ?? 0
     readonly property real openRouterLimit: source("openrouter").live?.limit ?? 0
     readonly property real openRouterUsed: openRouterLimit > 0 ? openRouterSpend / openRouterLimit : 0
@@ -86,6 +86,20 @@ Singleton {
 
     function windowReset(id, windowId) {
         return new Date(windowOf(id, windowId).resets_at ?? 0);
+    }
+
+    function subscriptionId(windowId) {
+        return subscriptionIds.find(id => Object.keys(windowOf(id, windowId)).length > 0) ?? "";
+    }
+
+    function subscriptionUsed(windowId) {
+        const id = subscriptionId(windowId);
+        return id ? windowUsed(id, windowId) : 0;
+    }
+
+    function subscriptionReset(windowId) {
+        const id = subscriptionId(windowId);
+        return id ? windowReset(id, windowId) : new Date(0);
     }
 
     function windowPace(windowId, reset) {

@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import Quickshell.Bluetooth
 import Quickshell.Services.UPower
 import qs.core
@@ -8,10 +9,22 @@ import qs.widgets
 Item {
     id: root
 
-    readonly property real podSize: 30
-    readonly property real level: Status.batteryLevel
-    readonly property bool pair: Math.round(Pods.left * 100) === Math.round(Pods.right * 100) && Pods.leftCharging === Pods.rightCharging
+    readonly property int slotCount: 4
+    readonly property real ringSize: 42
     readonly property var devices: (Bluetooth.defaultAdapter?.devices.values ?? []).filter(device => device.connected && device.batteryAvailable && !device.name.toLowerCase().includes("airpods"))
+    readonly property var laptopSlot: ({ icon: "laptop", level: Status.batteryLevel, charging: Status.charging })
+    readonly property var podSlots: !Pods.available ? [] : [
+        { icon: "pod-left", level: Pods.left, charging: Pods.leftCharging },
+        { icon: "pod-right", level: Pods.right, charging: Pods.rightCharging },
+        { icon: "pods-case", level: Pods.box, charging: false, empty: Pods.box <= 0 }
+    ]
+    readonly property var deviceSlots: devices.map(device => ({ icon: "headphones", level: device.battery, charging: false }))
+    readonly property var slots: {
+        const filled = [laptopSlot, ...podSlots, ...deviceSlots].slice(0, slotCount);
+        while (filled.length < slotCount)
+            filled.push({ icon: "", level: 0, charging: false, empty: true });
+        return filled;
+    }
     readonly property var profiles: [
         { profile: PowerProfile.PowerSaver, glyph: "󰌪", title: "Power Saver" },
         { profile: PowerProfile.Balanced, glyph: "󰾅", title: "Balanced" },
@@ -33,185 +46,131 @@ Item {
         return battery?.timeToEmpty > 0 ? duration(battery.timeToEmpty) : "On battery";
     }
 
-    function tone(value, charging) {
-        return charging ? Theme.charge : value < 0.2 ? Theme.warning : Theme.accent;
+    function tone(level, charging) {
+        return charging ? Theme.charge : level < 0.2 ? Theme.warning : Theme.accent;
     }
 
-    function percent(value, charging) {
-        return Math.round(value * 100) + "%" + (charging ? " 󱐋" : "");
-    }
+    width: column.width
+    height: column.height
 
-    width: row.width
-    height: row.height
+    component BatterySlot: Item {
+        id: slot
 
-    Row {
-        id: row
-        spacing: 22
+        required property var modelData
 
-        Column {
-            id: laptop
-            anchors.verticalCenter: parent.verticalCenter
-            spacing: Tokens.spacingItem
+        width: root.ringSize
+        height: root.ringSize
+        z: hover.hovered ? 1 : 0
 
-            Ring {
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: 66
-                height: 66
-                thickness: 7
-                value: root.level
-                text: String(Math.round(root.level * 100))
-                fontSize: 20
-                pulsing: Status.charging
-                fillColor: Status.charging ? Theme.charge : root.level < 0.2 ? Theme.warning : Theme.accent
+        HoverHandler {
+            id: hover
+        }
+
+        Ring {
+            anchors.fill: parent
+            thickness: 4
+            value: slot.modelData.empty ? 0 : slot.modelData.level
+            text: ""
+            fillColor: root.tone(slot.modelData.level, slot.modelData.charging)
+
+            Image {
+                anchors.centerIn: parent
+                visible: slot.modelData.icon !== ""
+                width: 19
+                height: 19
+                source: visible ? Qt.resolvedUrl("../../icons/" + slot.modelData.icon + ".svg") : ""
+                sourceSize.width: 64
+                sourceSize.height: 64
+                layer.enabled: true
+                layer.effect: MultiEffect {
+                    colorization: 1
+                    colorizationColor: slot.modelData.empty ? Theme.faint : Theme.text
+                }
             }
 
-            Row {
-                id: caption
+            Glyph {
+                visible: slot.modelData.charging
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: Tokens.spacingSmall
-
-                Glyph {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: root.current.glyph
-                    color: PowerProfiles.profile === PowerProfile.Performance ? Theme.warning : Theme.accent
-                    font.pixelSize: Tokens.fontSubtitle
-                }
-
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: root.caption()
-                    color: Theme.textDim
-                    font.pixelSize: Tokens.fontBody
-                }
-
-                HoverHandler {
-                    id: captionHover
-                }
+                anchors.verticalCenter: parent.top
+                text: "󱐋"
+                color: Theme.charge
+                font.pixelSize: Tokens.fontCaption
             }
         }
 
-        Column {
-            anchors.verticalCenter: parent.verticalCenter
-            spacing: Tokens.spacingLarge
-            visible: Pods.available || root.devices.length > 0
+        Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.top
+            anchors.bottomMargin: Tokens.spacingSmall
+            width: percent.implicitWidth + 16
+            height: percent.implicitHeight + 8
+            radius: height / 2
+            color: Qt.rgba(0.08, 0.08, 0.09, 0.96)
+            border.color: Theme.faint
+            opacity: hover.hovered && !slot.modelData.empty ? 1 : 0
+            visible: opacity > 0
 
-            Row {
-                visible: Pods.available && root.pair
-                spacing: Tokens.spacingItem
-
-                FillIcon {
-                    anchors.verticalCenter: parent.verticalCenter
-                    source: Qt.resolvedUrl("../../icons/pods.svg")
-                    level: Pods.left
-                    tone: root.tone(Pods.left, Pods.leftCharging)
-                    size: root.podSize
-                }
-
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: root.percent(Pods.left, Pods.leftCharging)
-                    color: Pods.leftCharging ? Theme.charge : Theme.text
-                    font.pixelSize: Tokens.fontSubtitle
-                    font.weight: Font.DemiBold
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: Tokens.durationFast
                 }
             }
 
-            Row {
-                visible: Pods.available && !root.pair
-                spacing: Tokens.spacingItem
-
-                FillIcon {
-                    anchors.verticalCenter: parent.verticalCenter
-                    source: Qt.resolvedUrl("../../icons/pods.svg")
-                    part: "left"
-                    level: Pods.left
-                    tone: root.tone(Pods.left, Pods.leftCharging)
-                    size: root.podSize
-                }
-
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: root.percent(Pods.left, Pods.leftCharging)
-                    color: Pods.leftCharging ? Theme.charge : Theme.text
-                    font.pixelSize: Tokens.fontMedium
-                    font.weight: Font.DemiBold
-                }
-
-                FillIcon {
-                    anchors.verticalCenter: parent.verticalCenter
-                    source: Qt.resolvedUrl("../../icons/pods.svg")
-                    part: "right"
-                    level: Pods.right
-                    tone: root.tone(Pods.right, Pods.rightCharging)
-                    size: root.podSize
-                }
-
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: root.percent(Pods.right, Pods.rightCharging)
-                    color: Pods.rightCharging ? Theme.charge : Theme.text
-                    font.pixelSize: Tokens.fontMedium
-                    font.weight: Font.DemiBold
-                }
+            Label {
+                id: percent
+                anchors.centerIn: parent
+                text: Math.round(slot.modelData.level * 100) + "%"
+                color: slot.modelData.charging ? Theme.charge : Theme.text
+                font.pixelSize: Tokens.fontSmall
+                font.weight: Font.DemiBold
             }
+        }
+    }
 
-            Row {
-                visible: Pods.available && Pods.box > 0
-                spacing: Tokens.spacingItem
+    Column {
+        id: column
+        spacing: Tokens.spacingItem
 
-                FillIcon {
-                    anchors.verticalCenter: parent.verticalCenter
-                    source: Qt.resolvedUrl("../../icons/case.svg")
-                    level: Pods.box
-                    tone: root.tone(Pods.box)
-                    size: root.podSize
-                }
-
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: Math.round(Pods.box * 100) + "%"
-                    font.pixelSize: Tokens.fontMedium
-                    font.weight: Font.DemiBold
-                }
-            }
+        Grid {
+            anchors.horizontalCenter: parent.horizontalCenter
+            columns: 2
+            spacing: 12
 
             Repeater {
-                model: root.devices
+                model: root.slots
 
-                Row {
-                    required property var modelData
+                BatterySlot {}
+            }
+        }
 
-                    spacing: Tokens.spacingItem
+        Row {
+            id: caption
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: Tokens.spacingSmall
 
-                    Glyph {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "󰂯"
-                        color: parent.modelData.battery < 0.2 ? Theme.warning : Theme.accent
-                        font.pixelSize: Tokens.fontIcon
-                    }
+            Glyph {
+                anchors.verticalCenter: parent.verticalCenter
+                text: root.current.glyph
+                color: PowerProfiles.profile === PowerProfile.Performance ? Theme.warning : Theme.accent
+                font.pixelSize: Tokens.fontSubtitle
+            }
 
-                    Label {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 70
-                        text: parent.modelData.name
-                        elide: Text.ElideRight
-                        font.pixelSize: Tokens.fontBody
-                    }
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                text: root.caption()
+                color: Theme.textDim
+                font.pixelSize: Tokens.fontBody
+            }
 
-                    Label {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: Math.round(parent.modelData.battery * 100) + "%"
-                        font.pixelSize: Tokens.fontMedium
-                        font.weight: Font.DemiBold
-                    }
-                }
+            HoverHandler {
+                id: captionHover
             }
         }
     }
 
     HoverPicker {
-        x: 0
-        y: laptop.y + laptop.height + 4 - height
+        x: caption.x
+        y: caption.y + caption.height + 4 - height
         rowHeight: 26
         pickerWidth: 170
         hoverable: true

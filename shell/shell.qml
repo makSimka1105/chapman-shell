@@ -5,6 +5,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import qs.core
 import qs.services
+import qs.modules.corners
 import qs.modules.lock
 import qs.modules.notch
 import qs.modules.power
@@ -23,6 +24,16 @@ ShellRoot {
         model: Quickshell.screens
 
         Wallpaper {
+            required property var modelData
+
+            screen: modelData
+        }
+    }
+
+    Variants {
+        model: Quickshell.screens
+
+        ScreenCorners {
             required property var modelData
 
             screen: modelData

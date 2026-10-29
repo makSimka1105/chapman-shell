@@ -13,6 +13,7 @@ Singleton {
     readonly property real radiusBackButton: 17
     readonly property real radiusCard: 18
     readonly property real radiusPanel: 26
+    readonly property real radiusScreen: 18
 
     readonly property real spacingHairline: 2
     readonly property real spacingTight: 3

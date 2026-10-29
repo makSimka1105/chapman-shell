@@ -68,7 +68,8 @@ Singleton {
             variants: [
                 { id: "icon", name: "Значок" },
                 { id: "percent", name: "Проценты" },
-                { id: "both", name: "Значок и проценты" }
+                { id: "both", name: "Значок и проценты" },
+                { id: "ring", name: "Кольцо вокруг Wi-Fi" }
             ]
         },
         {
