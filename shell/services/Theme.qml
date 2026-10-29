@@ -16,7 +16,7 @@ Singleton {
         const colors = theme.colors;
         return { text: colors.on_surface, accent: colors.primary, warning: colors.error };
     }
-    readonly property string wallpaper: selection.wallpaper ?? theme.wallpapers?.[0] ?? ""
+    readonly property string wallpaper: selection.wallpaper ?? (theme.wallpapers?.[0] ?? "").replace(/^~/, home)
 
     readonly property color body: "black"
     readonly property color text: palette.text

@@ -2,8 +2,8 @@
   "name": "Gruvbox",
   "variant": "dark",
   "wallpapers": [
-    "/home/maksibon/wallpapers/wallhaven-lykj3l.png",
-    "/home/maksibon/wallpapers/6host.png"
+    "~/wallpapers/wallhaven-lykj3l.png",
+    "~/wallpapers/6host.png"
   ],
   "glass": {
     "opacity": 0.85,

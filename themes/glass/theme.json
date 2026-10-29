@@ -2,8 +2,8 @@
   "name": "Glass",
   "variant": "dark",
   "wallpapers": [
-    "/home/maksibon/wallpapers/wallhaven-k82d26.jpg",
-    "/home/maksibon/wallpapers/wallhaven-9oke91.png"
+    "~/wallpapers/wallhaven-k82d26.jpg",
+    "~/wallpapers/wallhaven-9oke91.png"
   ],
   "glass": {
     "opacity": 0.72,

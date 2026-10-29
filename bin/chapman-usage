@@ -16,12 +16,10 @@ CLAUDE_CREDENTIALS = HOME / ".claude/.credentials.json"
 CLAUDE_PROJECTS = HOME / ".claude/projects"
 CLAUDE_PRICES = HOME / ".claude/pricing-cache.json"
 CODEX_SESSIONS = HOME / ".codex/sessions"
-QWEN_PROFILES = HOME / ".local/share/qwen-profiles"
+QWEN_PROFILES = (HOME / ".local/state/qwen", HOME / ".local/share/qwen-profiles")
 HERMES_DATABASE = HOME / ".hermes/state.db"
 STORE = HOME / ".local/share/chapman-shell/usage-days.json"
-LEGACY_STORE = HOME / ".local/share/notch/usage-days.json"
 OPENROUTER_MODELS = HOME / ".cache/chapman-shell/or-models.json"
-LEGACY_OPENROUTER_MODELS = HOME / ".cache/notch/or-models.json"
 OUTPUT = Path(os.environ["XDG_RUNTIME_DIR"]) / "chapman-usage.json"
 CLAUDE_URL = "https://claude.ai/api/oauth/usage"
 CLAUDE_CURL = "curl_chrome136"
@@ -43,7 +41,6 @@ PROVIDERS = {
     "hackathon": "hackathon",
 }
 PROFILE_ALIASES = {"course": "course-1", "or": "openrouter", "free": "openrouter"}
-LEGACY_SOURCES = {"claude": "claude", "or": "openrouter", "course": "course-1"}
 SUBSCRIPTIONS = (
     {"id": "claude", "name": "Claude", "color": "#e3a15b", "provider": "anthropic"},
     {"id": "codex", "name": "ChatGPT", "color": "#9be37f", "provider": "openai"},
@@ -248,7 +245,7 @@ def key_style(key_id, index):
 
 
 def fetch_openrouter_prices():
-    cached = load(OPENROUTER_MODELS, load(LEGACY_OPENROUTER_MODELS, {}))
+    cached = load(OPENROUTER_MODELS, {})
     if time.time() - cached.get("at", 0) < PRICE_CACHE_SECONDS and cached.get("models"):
         return cached["models"]
     try:
@@ -364,7 +361,7 @@ def codex_events(full):
 
 
 def profile_sources(key_ids):
-    for profile in sorted(QWEN_PROFILES.glob("*/projects")):
+    for profile in sorted(path for root in QWEN_PROFILES for path in root.glob("*/projects")):
         name = profile.parent.name
         source = name if name in key_ids else PROFILE_ALIASES.get(name)
         if source in key_ids:
@@ -452,14 +449,6 @@ def settle(store):
                     entry.setdefault(field, 0)
 
 
-def seed_store():
-    legacy = load(LEGACY_STORE, {})
-    return {
-        day: {LEGACY_SOURCES[source]: models for source, models in sources.items() if source in LEGACY_SOURCES}
-        for day, sources in legacy.items()
-    }
-
-
 def source_tokens(store, window, source, hours):
     daily = {field: [0] * WINDOW_DAYS for field in FIELDS}
     models = {}
@@ -514,7 +503,7 @@ def main():
     key_paths = sorted(KEYS_DIR.glob("*.key"))
     key_ids = {path.stem for path in key_paths}
     full = "--full" in sys.argv or not STORE.exists()
-    store = load(STORE, None) or seed_store()
+    store = load(STORE, {})
     hours = {}
     merge(store, claude_events(full), hours)
     merge(store, codex_events(full), hours)

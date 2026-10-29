@@ -38,7 +38,9 @@ def theme_ids():
 def load_theme(theme_id):
     if theme_id not in theme_ids():
         sys.exit(f"chapman-shell: unknown theme {theme_id}, have: {' '.join(theme_ids())}")
-    return json.loads((THEMES / theme_id / "theme.json").read_text())
+    theme = json.loads((THEMES / theme_id / "theme.json").read_text())
+    theme["wallpapers"] = [str(Path(path).expanduser()) for path in theme["wallpapers"]]
+    return theme
 
 
 def current():

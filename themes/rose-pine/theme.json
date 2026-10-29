@@ -2,8 +2,8 @@
   "name": "Rose Pine",
   "variant": "dark",
   "wallpapers": [
-    "/home/maksibon/wallpapers/lock_screen.png",
-    "/home/maksibon/wallpapers/wallhaven-lygzqq.jpg"
+    "~/wallpapers/lock_screen.png",
+    "~/wallpapers/wallhaven-lygzqq.jpg"
   ],
   "glass": {
     "opacity": 0.8,
