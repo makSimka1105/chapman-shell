@@ -6,6 +6,7 @@ chapman-shell theme <id>            apply a theme
 chapman-shell theme --json          themes for the switcher
 chapman-shell wallpaper <path>      change the wallpaper inside the current theme
 chapman-shell reapply               render the current theme again, glass if none
+chapman-shell ipc <target> <fn>...  call the running shell over quickshell ipc
 """
 
 import json
@@ -16,6 +17,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+SHELL_DIR = ROOT / "shell"
 THEMES = ROOT / "themes"
 ADAPTERS = ROOT / "adapters"
 STATE = Path(os.environ.get("CHAPMAN_STATE") or Path.home() / ".local/state/chapman-shell")
@@ -165,6 +167,8 @@ def main(args):
         apply(current().get("theme", DEFAULT_THEME), current().get("wallpaper"))
     elif args[:1] == ["wallpaper"] and len(args) == 2:
         switch_wallpaper(args[1])
+    elif args[:1] == ["ipc"] and len(args) >= 3:
+        os.execvp("qs", ["qs", "-p", str(SHELL_DIR), "ipc", "call", *args[1:]])
     else:
         sys.exit(__doc__.strip())
 
