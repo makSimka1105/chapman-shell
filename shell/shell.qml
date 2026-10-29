@@ -8,6 +8,7 @@ import qs.services
 import qs.modules.corners
 import qs.modules.lock
 import qs.modules.notch
+import qs.modules.polkit
 import qs.modules.power
 import qs.modules.settings
 import qs.modules.wallpaper
@@ -75,6 +76,8 @@ ShellRoot {
             powerMenu.close();
         }
     }
+
+    PolkitDialog {}
 
     SettingsWindow {
         id: settingsWindow
