@@ -1,13 +1,3 @@
-    Alt+V hotkey-overlay-title="Clipboard history" { spawn "chapman-shell" "ipc" "spotlight" "toggleQuery" ":"; }
-    Super+Shift+T hotkey-overlay-title="Themes" { spawn "chapman-shell" "ipc" "notch" "themes"; }
-    Super+P hotkey-overlay-title="Power menu" { spawn "chapman-shell" "ipc" "power" "toggle"; }
-    Super+Shift+P hotkey-overlay-title="Power menu" { spawn "chapman-shell" "ipc" "power" "toggle"; }
-    XF86MonBrightnessUp allow-when-locked=true { spawn-sh "brightnessctl --class=backlight set +10% && chapman-shell ipc osd brightness"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn-sh "brightnessctl --class=backlight set 10%- && chapman-shell ipc osd brightness"; }
-    Alt+S hotkey-overlay-title="Settings" { spawn "chapman-shell" "ipc" "settings" "toggle"; }
-    Super+Shift+S hotkey-overlay-title="Screenshot: Interactive" { screenshot; }
-}
-
 window-rule {
     match title="^chapman-settings$"
     open-floating true
