@@ -143,14 +143,14 @@ def apply(theme_id, wallpaper=None):
     STATE.mkdir(parents=True, exist_ok=True)
     values = context(theme_id, theme, wallpaper)
     COLORS.write_text(json.dumps(values, indent=2) + "\n")
-    CURRENT.write_text(json.dumps({"theme": theme_id, "wallpaper": wallpaper}) + "\n")
+    remembered = {**current().get("remembered", {}), theme_id: wallpaper}
+    CURRENT.write_text(json.dumps({"theme": theme_id, "wallpaper": wallpaper, "remembered": remembered}) + "\n")
     render_targets(values)
     run_targets()
 
 
 def switch_theme(theme_id):
-    chosen = current()
-    wallpaper = chosen.get("wallpaper")
+    wallpaper = current().get("remembered", {}).get(theme_id)
     if wallpaper not in load_theme(theme_id)["wallpapers"]:
         wallpaper = None
     apply(theme_id, wallpaper)
