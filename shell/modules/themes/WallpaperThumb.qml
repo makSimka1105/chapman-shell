@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell.Widgets
 import qs.core
 import qs.services
+import qs.widgets
 
 Item {
     id: root
@@ -10,7 +11,10 @@ Item {
     property bool selected
     property bool current
 
+    property bool removable
+
     signal clicked
+    signal removed
 
     ClippingRectangle {
         anchors.fill: parent
@@ -38,5 +42,34 @@ Item {
     MouseArea {
         anchors.fill: parent
         onClicked: root.clicked()
+    }
+
+    Rectangle {
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.margins: Tokens.spacingItem
+        width: 22
+        height: 22
+        radius: 11
+        visible: root.removable && hover.hovered
+        color: removeArea.containsMouse ? Theme.warning : Qt.alpha("black", 0.6)
+
+        Glyph {
+            anchors.centerIn: parent
+            text: "󰅖"
+            color: "white"
+            font.pixelSize: Tokens.fontSmall
+        }
+
+        MouseArea {
+            id: removeArea
+            anchors.fill: parent
+            hoverEnabled: true
+            onClicked: root.removed()
+        }
+    }
+
+    HoverHandler {
+        id: hover
     }
 }

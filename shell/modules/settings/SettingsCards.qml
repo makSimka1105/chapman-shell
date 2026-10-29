@@ -30,7 +30,9 @@ Flow {
                     width: root.cellWidth
                     height: Tokens.themeCardHeight
                     theme: modelData
+                    removable: modelData.user && root.row.remove !== undefined
                     onClicked: root.row.write(modelData.id)
+                    onRemoved: root.row.remove(modelData.id)
                 }
             }
 
@@ -42,7 +44,9 @@ Flow {
                     height: root.cellWidth * Tokens.wallpaperThumbHeight / Tokens.wallpaperThumbWidth
                     source: modelData
                     current: modelData === root.row.read()
+                    removable: root.row.remove !== undefined
                     onClicked: root.row.write(modelData)
+                    onRemoved: root.row.remove(modelData)
                 }
             }
         }

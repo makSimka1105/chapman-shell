@@ -15,15 +15,23 @@ FloatingWindow {
     readonly property var activePage: section.pages.find(candidate => candidate.key === currentPageKey) ?? section.pages[0] ?? null
     readonly property var pageOptions: section.pages.map(entry => ({ id: entry.key, label: entry.title }))
 
+    function show() {
+        visible = false;
+        visible = true;
+    }
+
     function toggle() {
-        visible = !visible;
+        if (visible && sidebar.Window.active)
+            visible = false;
+        else
+            show();
     }
 
     function open(target) {
         const parts = target.split("/");
         currentKey = parts[0];
         currentPageKey = parts[1] ?? "";
-        visible = true;
+        show();
     }
 
     title: "chapman-settings"

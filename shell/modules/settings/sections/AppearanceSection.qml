@@ -18,12 +18,13 @@ Section {
                             type: "themes",
                             items: () => Themes.themes,
                             read: () => Theme.name,
-                            write: id => Themes.apply(id)
+                            write: id => Themes.apply(id),
+                            remove: id => Themes.remove(id)
                         },
                         {
                             type: "input",
                             title: "Новая тема",
-                            subtitle: "Копия текущей, id из латиницы и дефисов",
+                            subtitle: "Копия текущей, id из латиницы и дефисов. Свои темы удаляются крестиком",
                             placeholder: "my-theme",
                             write: id => Themes.create(id)
                         }
@@ -36,7 +37,8 @@ Section {
                             type: "wallpapers",
                             items: () => Themes.themes.find(theme => theme.id === Theme.name)?.wallpapers ?? [],
                             read: () => Theme.wallpaper,
-                            write: path => Themes.setWallpaper(path)
+                            write: path => Themes.setWallpaper(path),
+                            remove: path => Themes.removeWallpaper(path)
                         },
                         {
                             type: "actions",

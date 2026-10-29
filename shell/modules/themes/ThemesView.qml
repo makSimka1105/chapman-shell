@@ -18,9 +18,9 @@ FocusScope {
 
     function open() {
         wasActive = false;
-        wallpaperIndex = -1;
         const index = Themes.themes.findIndex(theme => theme.id === Theme.name);
         themeIndex = Math.max(index, 0);
+        wallpaperIndex = wallpapers.length > 0 ? Math.max(wallpapers.indexOf(Theme.wallpaper), 0) : -1;
         forceActiveFocus();
     }
 
@@ -41,6 +41,13 @@ FocusScope {
             themeIndex = Math.max(0, Math.min(Themes.themes.length - 1, themeIndex + delta));
     }
 
+    function switchStrip(down) {
+        if (down && !inWallpapers && wallpapers.length > 0)
+            wallpaperIndex = Math.max(wallpapers.indexOf(Theme.wallpaper), 0);
+        else if (!down)
+            wallpaperIndex = -1;
+    }
+
     function confirm() {
         if (inWallpapers)
             applyWallpaper(wallpaperIndex);
@@ -58,12 +65,17 @@ FocusScope {
     implicitWidth: Tokens.themesWidth
     implicitHeight: Tokens.themesHeight
     Keys.onEscapePressed: closed()
-    Keys.onLeftPressed: step(-1)
-    Keys.onRightPressed: step(1)
     Keys.onReturnPressed: confirm()
     Keys.onEnterPressed: confirm()
-    Keys.onDownPressed: if (wallpapers.length > 0 && !inWallpapers) wallpaperIndex = 0
-    Keys.onUpPressed: wallpaperIndex = -1
+    Keys.onPressed: event => {
+        const moves = { [Qt.Key_Left]: () => step(-1), [Qt.Key_H]: () => step(-1), [Qt.Key_Right]: () => step(1), [Qt.Key_L]: () => step(1), [Qt.Key_Down]: () => switchStrip(true), [Qt.Key_J]: () => switchStrip(true), [Qt.Key_Up]: () => switchStrip(false), [Qt.Key_K]: () => switchStrip(false) };
+        if (moves[event.key]) {
+            moves[event.key]();
+            event.accepted = true;
+        }
+    }
+    onThemeIndexChanged: themeStrip.positionViewAtIndex(themeIndex, ListView.Contain)
+    onWallpaperIndexChanged: if (wallpaperIndex >= 0) wallpaperStrip.positionViewAtIndex(wallpaperIndex, ListView.Contain)
 
     Column {
         anchors.centerIn: parent
@@ -79,7 +91,8 @@ FocusScope {
             model: Themes.themes
             currentIndex: root.themeIndex
             clip: true
-            interactive: false
+            interactive: true
+            boundsBehavior: Flickable.StopAtBounds
             highlightFollowsCurrentItem: false
 
             delegate: ThemeCard {
@@ -110,7 +123,8 @@ FocusScope {
             spacing: Tokens.spacingMedium
             model: root.wallpapers
             clip: true
-            interactive: false
+            interactive: true
+            boundsBehavior: Flickable.StopAtBounds
 
             delegate: WallpaperThumb {
                 required property string modelData

@@ -36,6 +36,14 @@ Singleton {
         run(["theme", "import", name]);
     }
 
+    function remove(id) {
+        run(["theme", "delete", id]);
+    }
+
+    function removeWallpaper(path) {
+        run(["wallpaper", "remove", path]);
+    }
+
     function addWallpapers(paths) {
         run(["wallpaper", "add", ...paths]);
     }
@@ -93,7 +101,7 @@ Singleton {
         id: wallpaperDialog
         title: "Обои для темы"
         fileMode: FileDialog.OpenFiles
-        nameFilters: ["Картинки (*.png *.jpg *.jpeg *.webp *.gif *.bmp)"]
+        nameFilters: ["Картинки (*.png *.jpg *.jpeg *.gif *.bmp)"]
         onAccepted: root.addWallpapers(selectedFiles.map(url => decodeURIComponent(url.toString().replace(/^file:\/\//, ""))))
     }
 }

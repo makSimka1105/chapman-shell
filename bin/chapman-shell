@@ -6,10 +6,12 @@ chapman-shell theme <id>                  apply a theme
 chapman-shell theme --json                themes for the switcher
 chapman-shell theme new <id> [<from>]     copy a theme, the current one by default, into a new user theme
 chapman-shell theme import <scheme> [<id>]  make a theme from a ghostty color scheme name or file
+chapman-shell theme delete <id>           move a user theme with its wallpapers to the trash
 chapman-shell schemes --json              ghostty color schemes available for import
 chapman-shell wallpaper <path>            change the wallpaper inside the current theme
 chapman-shell wallpaper add <path>...     copy images into the current theme's wallpapers and show the first
 chapman-shell wallpaper dir               print the current theme's wallpaper folder
+chapman-shell wallpaper remove <path>     move a wallpaper of the current theme to the trash
 chapman-shell reapply                     render the current theme again, glass if none
 chapman-shell ipc <target> <fn>...        call the running shell over quickshell ipc
 """
@@ -20,11 +22,14 @@ import re
 import shutil
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
+from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parent.parent
 SHELL_DIR = ROOT / "shell"
 DATA = Path(os.environ.get("XDG_DATA_HOME") or Path.home() / ".local/share") / "chapman-shell"
+TRASH = Path(os.environ.get("XDG_DATA_HOME") or Path.home() / ".local/share") / "Trash"
 CONFIG = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config") / "chapman-shell"
 THEME_DIRS = (DATA / "themes", ROOT / "themes")
 TARGETS = CONFIG / "targets.json"
@@ -32,7 +37,7 @@ STATE = Path(os.environ.get("CHAPMAN_THEME_STATE") or Path.home() / ".local/stat
 CURRENT = STATE / "current.json"
 COLORS = STATE / "colors.json"
 DEFAULT_THEME = "glass"
-IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"}
+IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".bmp"}
 PLACEHOLDER = re.compile(r"\{\{([\w.]+)\}\}")
 SWATCHES = ["primary", "surface", "on_surface", "secondary", "tertiary", "error"]
 ZED_ALPHA_GAP = 0.12
@@ -269,6 +274,38 @@ def import_scheme(scheme, theme_id=None):
     write_user_theme(theme_id, scheme_theme(path.name, path.read_text()))
 
 
+def trash(path):
+    files, info = TRASH / "files", TRASH / "info"
+    files.mkdir(parents=True, exist_ok=True)
+    info.mkdir(parents=True, exist_ok=True)
+    name, index = path.name, 1
+    while (files / name).exists() or (info / f"{name}.trashinfo").exists():
+        index += 1
+        name = f"{path.stem}.{index}{path.suffix}"
+    stamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    (info / f"{name}.trashinfo").write_text(f"[Trash Info]\nPath={quote(str(path))}\nDeletionDate={stamp}\n")
+    shutil.move(path, files / name)
+
+
+def delete_theme(theme_id):
+    folder = DATA / "themes" / theme_id
+    if not folder.is_dir():
+        sys.exit(f"chapman-shell: {theme_id} is not a user theme")
+    trash(folder.resolve())
+    if current().get("theme") == theme_id:
+        apply(DEFAULT_THEME)
+
+
+def remove_wallpaper(path):
+    theme_id = current_theme()
+    path = Path(path).expanduser().resolve()
+    if path.parent != wallpaper_dir(theme_id).resolve():
+        sys.exit(f"chapman-shell: {path} is not in {wallpaper_dir(theme_id)}")
+    trash(path)
+    wallpaper = current().get("wallpaper")
+    apply(theme_id, None if wallpaper == str(path) else wallpaper)
+
+
 def schemes_json():
     entries = []
     for name, path in ghostty_schemes().items():
@@ -308,6 +345,8 @@ def theme_command(args):
         new_theme(*args[1:])
     elif args[0] == "import" and len(args) in (2, 3):
         import_scheme(*args[1:])
+    elif args[0] == "delete" and len(args) == 2:
+        delete_theme(args[1])
     elif len(args) == 1:
         switch_theme(args[0])
     else:
@@ -319,6 +358,8 @@ def wallpaper_command(args):
         print(wallpaper_dir(current_theme()))
     elif args[:1] == ["add"] and len(args) > 1:
         add_wallpapers(args[1:])
+    elif args[:1] == ["remove"] and len(args) == 2:
+        remove_wallpaper(args[1])
     elif len(args) == 1:
         switch_wallpaper(args[0])
     else:
