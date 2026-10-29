@@ -5,5 +5,3 @@ window-rule {
     default-column-width { fixed 1100; }
     default-window-height { fixed 720; }
 }
-
-include optional=true "~/.local/state/theme/niri.kdl"

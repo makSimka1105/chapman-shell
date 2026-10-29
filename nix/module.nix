@@ -56,11 +56,6 @@ in
 
     xdg.configFile."chapman-shell/niri.kdl".source = "${cfg.package}/share/chapman-shell/niri.kdl";
 
-    programs.chapman-shell.theme.targets."niri.kdl" = {
-      template = "${cfg.package}/share/chapman-shell/niri-theme.kdl";
-      reload = "${niri} msg action load-config-file";
-    };
-
     xdg.configFile."chapman-shell/targets.json" = {
       text = builtins.toJSON (lib.mapAttrs (_: lib.filterAttrs (_: value: value != null)) cfg.theme.targets);
       onChange = "${lib.getExe cfg.package} reapply || true";
