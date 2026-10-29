@@ -44,7 +44,7 @@ Item {
         anchors.rightMargin: Tokens.marginRow
         anchors.verticalCenter: parent.verticalCenter
         active: !root.stacked
-        sourceComponent: root.row.type === "slider" ? slider : root.row.type === "toggle" ? toggle : info
+        sourceComponent: ({ slider: slider, toggle: toggle, actions: actions, input: input })[root.row.type] ?? info
     }
 
     Column {
@@ -98,6 +98,39 @@ Item {
         Toggle {
             checked: root.row.read()
             onToggled: root.row.write(!checked)
+        }
+    }
+
+    Component {
+        id: actions
+
+        Row {
+            spacing: Tokens.spacingMedium
+
+            Repeater {
+                model: root.row.actions
+
+                IconButton {
+                    required property var modelData
+
+                    glyph: modelData.glyph
+                    label: modelData.label
+                    onClicked: modelData.run()
+                }
+            }
+        }
+    }
+
+    Component {
+        id: input
+
+        TextField {
+            width: Tokens.settingsControlWidth
+            placeholder: root.row.placeholder ?? ""
+            onAccepted: value => {
+                root.row.write(value);
+                text = "";
+            }
         }
     }
 

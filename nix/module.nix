@@ -26,12 +26,45 @@ in
       default = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
     };
     quickshell = lib.mkPackageOption pkgs "quickshell" { };
+    theme.targets = lib.mkOption {
+      default = { };
+      type = lib.types.attrsOf (lib.types.submodule {
+        options = {
+          template = lib.mkOption {
+            type = lib.types.nullOr lib.types.path;
+            default = null;
+          };
+          path = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+          };
+          reload = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+          };
+          hook = lib.mkOption {
+            type = lib.types.nullOr lib.types.path;
+            default = null;
+          };
+        };
+      });
+    };
   };
 
   config = lib.mkIf cfg.enable {
     home.packages = [ cfg.package cfg.quickshell ];
 
     xdg.configFile."chapman-shell/niri.kdl".source = "${cfg.package}/share/chapman-shell/niri.kdl";
+
+    programs.chapman-shell.theme.targets."niri.kdl" = {
+      template = "${cfg.package}/share/chapman-shell/niri-theme.kdl";
+      reload = "${niri} msg action load-config-file";
+    };
+
+    xdg.configFile."chapman-shell/targets.json" = {
+      text = builtins.toJSON (lib.mapAttrs (_: lib.filterAttrs (_: value: value != null)) cfg.theme.targets);
+      onChange = "${lib.getExe cfg.package} reapply || true";
+    };
 
     systemd.user.services.chapman-shell = {
       Unit = {

@@ -97,6 +97,7 @@ FloatingWindow {
                 IconButton {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
+                    visible: root.activePage?.reset !== undefined
                     glyph: "󰑐"
                     label: "Сбросить"
                     onClicked: IslandConfig.reset(root.activePage.reset)

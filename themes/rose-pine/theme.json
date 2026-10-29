@@ -1,10 +1,6 @@
 {
   "name": "Rose Pine",
   "variant": "dark",
-  "wallpapers": [
-    "~/wallpapers/lock_screen.png",
-    "~/wallpapers/wallhaven-lygzqq.jpg"
-  ],
   "glass": {
     "opacity": 0.8,
     "blur_passes": 3,

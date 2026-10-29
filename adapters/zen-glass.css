@@ -1,6 +1,0 @@
-#zen-browser-background,
-#zen-toolbar-background {
-  --zen-main-browser-background: {{terminal.background}}{{glass.alpha}} !important;
-  --zen-main-browser-background-toolbar: {{terminal.background}}{{glass.alpha}} !important;
-  --zen-background-opacity: 1 !important;
-}

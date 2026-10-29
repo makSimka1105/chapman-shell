@@ -6,4 +6,4 @@ window-rule {
     default-window-height { fixed 720; }
 }
 
-include optional=true "~/.local/state/chapman-shell/niri.kdl"
+include optional=true "~/.local/state/theme/niri.kdl"

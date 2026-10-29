@@ -1,10 +1,6 @@
 {
   "name": "Glass",
   "variant": "dark",
-  "wallpapers": [
-    "~/wallpapers/wallhaven-k82d26.jpg",
-    "~/wallpapers/wallhaven-9oke91.png"
-  ],
   "glass": {
     "opacity": 0.72,
     "blur_passes": 3,

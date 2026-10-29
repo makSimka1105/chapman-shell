@@ -7,16 +7,14 @@ Singleton {
     id: root
 
     readonly property string home: Quickshell.env("HOME")
-    readonly property string runtime: Quickshell.env("CHAPMAN_STATE") || home + "/.local/state/chapman-shell"
-    readonly property var selection: currentFile.text() ? JSON.parse(currentFile.text()) : ({})
-    readonly property string name: selection.theme ?? "glass"
-    readonly property string folder: Quickshell.shellDir + "/../themes/" + name
-    readonly property var theme: themeFile.text() ? JSON.parse(themeFile.text()) : ({})
+    readonly property string runtime: Quickshell.env("CHAPMAN_THEME_STATE") || home + "/.local/state/theme"
+    readonly property var theme: colorsFile.text() ? JSON.parse(colorsFile.text()) : ({})
+    readonly property string name: theme.id ?? "glass"
     readonly property var palette: {
-        const colors = theme.colors;
-        return { text: colors.on_surface, accent: colors.primary, warning: colors.error };
+        const colors = theme.colors ?? {};
+        return { text: colors.on_surface ?? "white", accent: colors.primary ?? "white", warning: colors.error ?? "red" };
     }
-    readonly property string wallpaper: selection.wallpaper ?? (theme.wallpapers?.[0] ?? "").replace(/^~/, home)
+    readonly property string wallpaper: theme.wallpaper ?? ""
 
     readonly property color body: "black"
     readonly property color text: palette.text
@@ -29,19 +27,11 @@ Singleton {
     readonly property string font: "Noto Sans"
 
     FileView {
-        id: currentFile
-        path: root.runtime + "/current.json"
+        id: colorsFile
+        path: root.runtime + "/colors.json"
         blockLoading: true
         watchChanges: true
         printErrors: false
-        onFileChanged: reload()
-    }
-
-    FileView {
-        id: themeFile
-        path: root.folder + "/theme.json"
-        blockLoading: true
-        watchChanges: true
         onFileChanged: reload()
     }
 }
