@@ -3,7 +3,6 @@ import qs.modules.settings.sections
 
 QtObject {
     readonly property list<Section> sections: [
-        IslandSection {},
         WifiSection {},
         Section { key: "bluetooth"; title: "Bluetooth"; glyph: "󰂯"; ready: false },
         Section { key: "network"; title: "Сеть"; glyph: "󰛳"; ready: false },

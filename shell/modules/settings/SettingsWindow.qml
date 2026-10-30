@@ -3,7 +3,6 @@ import Quickshell
 import qs.core
 import qs.services
 import qs.widgets
-import qs.modules.settings.island
 import qs.modules.settings.wifi
 
 FloatingWindow {
@@ -100,15 +99,6 @@ FloatingWindow {
                     options: root.pageOptions
                     current: root.activePage?.key ?? ""
                     onPicked: id => root.currentPageKey = id
-                }
-
-                IconButton {
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    visible: root.activePage?.reset !== undefined
-                    glyph: "󰑐"
-                    label: "Сбросить"
-                    onClicked: IslandConfig.reset(root.activePage.reset)
                 }
             }
 
