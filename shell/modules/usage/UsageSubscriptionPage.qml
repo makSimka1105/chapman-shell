@@ -12,13 +12,15 @@ Column {
     readonly property real input: Usage.total(source, "i")
     readonly property real output: Usage.total(source, "o")
     readonly property real requests: Usage.total(source, "reqs")
+    readonly property real sinceInput: Usage.sinceTotal(source, "i")
+    readonly property real sinceOutput: Usage.sinceTotal(source, "o")
     readonly property var cards: windows.map(entry => ({
                 title: entry.label,
                 value: Math.round(entry.used * 100) + "%",
                 note: "сброс через " + Usage.untilText(new Date(entry.resets_at))
             })).concat([
-        { title: "Эквивалент, 7д", value: Usage.moneyText(Usage.total(source, "eq")), note: "по прайсу API" },
-        { title: "Токены, 7д", value: Usage.tokensText(input + output), note: "in " + Usage.tokensText(input) + " · out " + Usage.tokensText(output) },
+        { title: "Токены " + Usage.sinceLabel, value: Usage.tokensText(sinceInput + sinceOutput), note: "in " + Usage.tokensText(sinceInput) + " · out " + Usage.tokensText(sinceOutput) },
+        { title: "Эквивалент " + Usage.sinceLabel, value: Usage.moneyText(Usage.sinceTotal(source, "eq")), note: "по прайсу API" },
         { title: "Запросов, 7д", value: Math.round(requests).toString(), note: requests > 0 ? Usage.tokensText((input + output) / requests) + " на запрос" : "нет" },
         { title: "Статус", value: Usage.statusText(item.status), note: item.provider }
     ]).slice(0, 4)

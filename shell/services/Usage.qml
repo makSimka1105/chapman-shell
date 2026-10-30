@@ -16,6 +16,7 @@ Singleton {
     readonly property var months: cache.months ?? []
     readonly property date updated: new Date(cache.fetched_at ?? 0)
     readonly property bool known: cache.fetched_at !== undefined
+    readonly property string sinceLabel: cache.since ? "с " + Qt.formatDate(new Date(cache.since), "dd.MM") : "за всё время"
     readonly property var windowSpans: ({
             five_hour: 5 * 3600000,
             seven_day: 7 * 86400000
@@ -138,6 +139,10 @@ Singleton {
         if (!month)
             return 0;
         return id ? (month[id]?.[key] ?? 0) : sourceIds.reduce((sum, name) => sum + (month[name]?.[key] ?? 0), 0);
+    }
+
+    function sinceTotal(id, key) {
+        return months.reduce((sum, month) => sum + monthValue(month, id, key), 0);
     }
 
     function monthLabel(month) {

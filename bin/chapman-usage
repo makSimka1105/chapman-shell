@@ -19,6 +19,7 @@ CODEX_SESSIONS = HOME / ".codex/sessions"
 QWEN_PROFILES = (HOME / ".local/state/qwen", HOME / ".local/share/qwen-profiles")
 HERMES_DATABASE = HOME / ".hermes/state.db"
 STORE = HOME / ".local/share/chapman-shell/usage-days.json"
+START = HOME / ".local/share/chapman-shell/usage-start"
 OPENROUTER_MODELS = HOME / ".cache/chapman-shell/or-models.json"
 OUTPUT = Path(os.environ["XDG_RUNTIME_DIR"]) / "chapman-usage.json"
 CLAUDE_URL = "https://claude.ai/api/oauth/usage"
@@ -277,9 +278,15 @@ def claude_rate(prices, name):
     return None
 
 
+def counting_start():
+    try:
+        return datetime.fromisoformat(START.read_text().strip())
+    except (OSError, ValueError):
+        return None
+
+
 def local_moment(stamp):
-    moment = datetime.fromisoformat(stamp.replace("Z", "+00:00")).astimezone()
-    return moment.date().isoformat(), moment.hour
+    return datetime.fromisoformat(stamp.replace("Z", "+00:00")).astimezone()
 
 
 def recent_files(root, pattern, full):
@@ -309,9 +316,12 @@ def claude_messages(full):
     return seen.values()
 
 
-def claude_events(full):
+def claude_events(full, start):
     prices = load(CLAUDE_PRICES, {}).get("models", {})
     for stamp, model, usage in claude_messages(full):
+        moment = local_moment(stamp)
+        if start and moment < start:
+            continue
         rate = claude_rate(prices, model)
         fresh = usage.get("input_tokens", 0)
         out = usage.get("output_tokens", 0)
@@ -321,8 +331,7 @@ def claude_events(full):
         cost = 0.0
         if rate:
             cost = (fresh * rate[0] + out * rate[1] + read * rate[2] + (write - long_write) * rate[3] + long_write * rate[0] * 2) / 1e6
-        day, hour = local_moment(stamp)
-        yield Event(day, hour, "claude", model, fresh, out, read, write, cost, rate, 1)
+        yield Event(moment.date().isoformat(), moment.hour, "claude", model, fresh, out, read, write, cost, rate, 1)
 
 
 def codex_rate(models, model):
@@ -335,7 +344,7 @@ def codex_rate(models, model):
     return None
 
 
-def codex_events(full):
+def codex_events(full, start):
     models = fetch_openrouter_prices()
     for path in recent_files(CODEX_SESSIONS, CODEX_GLOB, full):
         model = "unknown"
@@ -347,7 +356,8 @@ def codex_events(full):
                 continue
             total = json.dumps(payload["info"].get("total_token_usage"), sort_keys=True)
             usage = payload["info"].get("last_token_usage")
-            if total in seen or not usage:
+            moment = local_moment(row["timestamp"])
+            if total in seen or not usage or start and moment < start:
                 continue
             seen.add(total)
             read = usage.get("cached_input_tokens", 0)
@@ -356,8 +366,7 @@ def codex_events(full):
             out = usage.get("output_tokens", 0) + usage.get("reasoning_output_tokens", 0)
             rate = codex_rate(models, model)
             cost = (fresh * rate[0] + read * rate[2] + write * rate[0] + out * rate[1]) / 1e6 if rate else 0.0
-            day, hour = local_moment(row["timestamp"])
-            yield Event(day, hour, "codex", model, fresh, out, read, write, cost, rate, 1)
+            yield Event(moment.date().isoformat(), moment.hour, "codex", model, fresh, out, read, write, cost, rate, 1)
 
 
 def profile_sources(key_ids):
@@ -383,12 +392,13 @@ def qwen_rows(root, full):
                     yield row, event
 
 
-def qwen_events(full, key_ids):
+def qwen_events(full, key_ids, start):
     models = fetch_openrouter_prices()
     seen = set()
     for root, source in profile_sources(key_ids):
         for row, event in qwen_rows(root, full):
-            if row["uuid"] in seen:
+            moment = local_moment(row["timestamp"])
+            if row["uuid"] in seen or start and moment < start:
                 continue
             seen.add(row["uuid"])
             model = event.get("model") or "unknown"
@@ -397,11 +407,10 @@ def qwen_events(full, key_ids):
             out = event.get("output_token_count", 0)
             rate = openrouter_rate(models, model)
             cost = ((total_in - read) * rate[0] + read * rate[2] + out * rate[1]) / 1e6 if rate else 0.0
-            day, hour = local_moment(row["timestamp"])
-            yield Event(day, hour, source, model, total_in - read, out, read, 0, cost, rate, 1)
+            yield Event(moment.date().isoformat(), moment.hour, source, model, total_in - read, out, read, 0, cost, rate, 1)
 
 
-def hermes_events(key_ids):
+def hermes_events(key_ids, start):
     import sqlite3
     if "openrouter" not in key_ids or not HERMES_DATABASE.exists():
         return
@@ -416,6 +425,8 @@ def hermes_events(key_ids):
     models = fetch_openrouter_prices()
     totals = {}
     for model, seen, fresh, out, read, write, estimated, actual, calls in rows:
+        if start and seen < start.timestamp():
+            continue
         slot = totals.setdefault((datetime.fromtimestamp(seen).date().isoformat(), model), [0, 0, 0, 0, 0.0, 0])
         for index, value in enumerate((fresh, out, read, write, actual or estimated or 0.0, calls)):
             slot[index] += value
@@ -504,11 +515,12 @@ def main():
     key_ids = {path.stem for path in key_paths}
     full = "--full" in sys.argv or not STORE.exists()
     store = load(STORE, {})
+    start = counting_start()
     hours = {}
-    merge(store, claude_events(full), hours)
-    merge(store, codex_events(full), hours)
-    merge(store, qwen_events(full, key_ids), hours)
-    merge(store, hermes_events(key_ids), hours)
+    merge(store, claude_events(full, start), hours)
+    merge(store, codex_events(full, start), hours)
+    merge(store, qwen_events(full, key_ids, start), hours)
+    merge(store, hermes_events(key_ids, start), hours)
     save(STORE, store)
     today = date.today()
     window = [(today - timedelta(days=back)).isoformat() for back in range(WINDOW_DAYS - 1, -1, -1)]
@@ -517,6 +529,7 @@ def main():
         source["tokens"] = source_tokens(store, window, source["id"], hours)
     report = {
         "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "since": start.isoformat() if start else None,
         "window": window,
         "sources": sources,
         "months": month_buckets(store, [source["id"] for source in sources]),

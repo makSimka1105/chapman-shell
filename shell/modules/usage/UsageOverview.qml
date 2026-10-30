@@ -7,13 +7,13 @@ Column {
     id: root
 
     readonly property real costTotal: Usage.allTotal("eq")
-    readonly property real inputTotal: Usage.allTotal("i")
-    readonly property real outputTotal: Usage.allTotal("o")
+    readonly property real sinceInput: Usage.sinceTotal("", "i")
+    readonly property real sinceOutput: Usage.sinceTotal("", "o")
     readonly property var nearest: Usage.nearestWindow
     readonly property var cards: [
         { title: "Эквивалент API, 7д", value: Usage.moneyText(costTotal), note: "все источники" },
         { title: "Платим на деле", value: Usage.moneyText(Usage.keySpend), note: "ключи, расход по данным серверов" },
-        { title: "Токены, 7д", value: Usage.tokensText(inputTotal + outputTotal), note: "in " + Usage.tokensText(inputTotal) + " · out " + Usage.tokensText(outputTotal) },
+        { title: "Токены " + Usage.sinceLabel, value: Usage.tokensText(sinceInput + sinceOutput), note: "in " + Usage.tokensText(sinceInput) + " · out " + Usage.tokensText(sinceOutput) },
         { title: "Ближайший лимит", value: nearest ? Usage.untilText(new Date(nearest.window.resets_at)) : "-", note: nearest ? Usage.sourceName(nearest.id) + ", " + nearest.window.label + ", " + Math.round(nearest.window.used * 100) + "%" : "нет данных" }
     ]
     readonly property var costSeries: Usage.tokenIds.map(id => ({
