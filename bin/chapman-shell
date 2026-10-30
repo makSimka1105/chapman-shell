@@ -292,7 +292,10 @@ def delete_theme(theme_id):
     if not folder.is_dir():
         sys.exit(f"chapman-shell: {theme_id} is not a user theme")
     trash(folder.resolve())
-    if current().get("theme") == theme_id:
+    chosen = current()
+    chosen.get("remembered", {}).pop(theme_id, None)
+    CURRENT.write_text(json.dumps(chosen) + "\n")
+    if chosen.get("theme") == theme_id:
         apply(DEFAULT_THEME)
 
 
