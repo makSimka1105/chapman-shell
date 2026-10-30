@@ -31,8 +31,9 @@ Rectangle {
         id: cover
         anchors.left: parent.left
         anchors.leftMargin: Tokens.marginInner
-        anchors.verticalCenter: parent.verticalCenter
-        width: parent.height - 20
+        anchors.top: parent.top
+        anchors.topMargin: Tokens.marginInner
+        width: 44
         height: width
         radius: 10
         color: Theme.faint
@@ -57,7 +58,7 @@ Rectangle {
         anchors.leftMargin: Tokens.marginInner
         anchors.right: controls.left
         anchors.rightMargin: Tokens.marginInner
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenter: cover.verticalCenter
         spacing: Tokens.spacingTight
 
         Row {
@@ -90,34 +91,13 @@ Rectangle {
             elide: Text.ElideRight
             font.pixelSize: Tokens.fontCaption
         }
-
-        Rectangle {
-            width: parent.width
-            height: 3
-            radius: Tokens.radiusHairline
-            color: Theme.faint
-            visible: Media.player !== null
-
-            Rectangle {
-                width: parent.width * Media.progress
-                height: parent.height
-                radius: parent.radius
-                color: Theme.accent
-
-                Behavior on width {
-                    NumberAnimation {
-                        duration: 1000
-                    }
-                }
-            }
-        }
     }
 
     Row {
         id: controls
         anchors.right: parent.right
         anchors.rightMargin: Tokens.marginMedium
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenter: cover.verticalCenter
         spacing: Tokens.spacingItem
         visible: Media.player !== null
 
@@ -156,6 +136,30 @@ Rectangle {
             visible: Media.player?.canGoNext ?? false
             glyph: "󰒭"
             onClicked: Media.player.next()
+        }
+    }
+
+    Rectangle {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: Tokens.marginInner
+        height: 3
+        radius: Tokens.radiusHairline
+        color: Theme.faint
+        visible: Media.player !== null
+
+        Rectangle {
+            width: parent.width * Media.progress
+            height: parent.height
+            radius: parent.radius
+            color: Theme.accent
+
+            Behavior on width {
+                NumberAnimation {
+                    duration: 1000
+                }
+            }
         }
     }
 }

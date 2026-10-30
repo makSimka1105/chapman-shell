@@ -133,7 +133,7 @@ Item {
 
         Grid {
             anchors.horizontalCenter: parent.horizontalCenter
-            columns: 2
+            columns: root.slotCount
             spacing: 12
 
             Repeater {

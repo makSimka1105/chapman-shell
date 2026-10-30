@@ -60,21 +60,15 @@
   },
   "home": {
     "grid": {
-      "columns": 6,
-      "gap": 14,
+      "columns": 4,
+      "gap": 40,
       "rowGap": 12,
-      "width": 1400,
+      "width": "fit",
       "justify": "between"
     },
     "items": [
       {
-        "id": "focus",
-        "enabled": true,
-        "col": 0,
-        "span": 1
-      },
-      {
-        "id": "workspaces",
+        "id": "media",
         "enabled": true,
         "col": 0,
         "span": 1
@@ -86,39 +80,27 @@
         "span": 1
       },
       {
+        "id": "clock",
+        "enabled": true,
+        "col": 1,
+        "span": 1
+      },
+      {
         "id": "battery",
         "enabled": true,
         "col": 1,
         "span": 1
       },
       {
-        "id": "media",
-        "enabled": true,
-        "col": 1,
-        "span": 1
-      },
-      {
-        "id": "clock",
+        "id": "tiles",
         "enabled": true,
         "col": 2,
         "span": 1
       },
       {
-        "id": "calendar",
-        "enabled": true,
-        "col": 3,
-        "span": 1
-      },
-      {
         "id": "links",
         "enabled": true,
-        "col": 4,
-        "span": 1
-      },
-      {
-        "id": "tiles",
-        "enabled": true,
-        "col": 5,
+        "col": 3,
         "span": 1
       }
     ]

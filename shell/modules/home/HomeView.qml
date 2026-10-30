@@ -33,7 +33,6 @@ Item {
 
     HomeWidgets {
         id: homeWidgets
-        output: root.output
         picker: root.picker
         onPageRequested: page => root.pageRequested(page)
         onPickerToggled: name => root.picker = root.picker === name ? "" : name
