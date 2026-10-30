@@ -32,6 +32,7 @@ Item {
             themes: 36,
             search: 36
         })
+    readonly property real widest: Math.max(restWidth, homeSize.width, notificationSize.width, content.control.implicitWidth, content.themes.implicitWidth, content.searchView.implicitWidth)
     readonly property size goal: mode === "control" ? Qt.size(content.control.implicitWidth, content.control.implicitHeight) : mode === "themes" ? Qt.size(content.themes.implicitWidth, content.themes.implicitHeight) : mode === "search" ? Qt.size(content.searchView.implicitWidth, content.searchView.implicitHeight) : sizes[mode]
 
     readonly property int morphDuration: Tokens.durationSlow

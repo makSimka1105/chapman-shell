@@ -130,7 +130,7 @@ ShellRoot {
 
             screen: modelData
             anchors.top: true
-            implicitWidth: notch.homeSize.width + shadowRoom * 2
+            implicitWidth: notch.widest + shadowRoom * 2
             implicitHeight: notch.maxHeight + shadowRoom + Tokens.islandDetachGap
             exclusiveZone: notch.restSize.height - window.niriTopSpace + window.windowGap
             color: "transparent"
