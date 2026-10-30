@@ -30,6 +30,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SHELL_DIR = ROOT / "shell"
 DATA = Path(os.environ.get("XDG_DATA_HOME") or Path.home() / ".local/share") / "chapman-shell"
 TRASH = Path(os.environ.get("XDG_DATA_HOME") or Path.home() / ".local/share") / "Trash"
+WINDOW = {"radius": 16, "border": "off", "ring": "#ffffff40", "border_active": "#ffffff40", "border_inactive": "#ffffff20", "shadow": "#00000070"}
 CONFIG = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config") / "chapman-shell"
 THEME_DIRS = (DATA / "themes", ROOT / "themes")
 TARGETS = CONFIG / "targets.json"
@@ -96,6 +97,7 @@ def context(theme_id, theme, wallpaper):
         "colors": theme["colors"],
         "terminal": theme["terminal"],
         "glass": glass,
+        "window": {**WINDOW, **theme.get("window", {})},
         "wallpaper": wallpaper,
     }
 
