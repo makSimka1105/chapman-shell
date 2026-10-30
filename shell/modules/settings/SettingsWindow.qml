@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Dialogs
 import Quickshell
 import qs.core
 import qs.services
@@ -179,6 +180,21 @@ FloatingWindow {
             duration: Tokens.durationEntrance
             easing.type: Easing.OutBack
             easing.overshoot: Tokens.overshootSoft
+        }
+    }
+
+    FileDialog {
+        id: wallpaperDialog
+        title: "Обои для темы"
+        fileMode: FileDialog.OpenFiles
+        nameFilters: ["Картинки (*.png *.jpg *.jpeg *.gif *.bmp)"]
+        onAccepted: Themes.addWallpapers(selectedFiles.map(url => decodeURIComponent(url.toString().replace(/^file:\/\//, ""))))
+    }
+
+    Connections {
+        target: Themes
+        function onPickRequested() {
+            wallpaperDialog.open();
         }
     }
 }

@@ -2,7 +2,6 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import QtQuick.Dialogs
 
 Singleton {
     id: root
@@ -10,6 +9,8 @@ Singleton {
     readonly property string bin: Quickshell.shellDir + "/../bin/chapman-shell"
     property var themes: []
     property var schemes: []
+
+    signal pickRequested
 
     function run(args) {
         commandProcess.command = [bin, ...args];
@@ -49,7 +50,7 @@ Singleton {
     }
 
     function pickWallpapers() {
-        wallpaperDialog.open();
+        pickRequested();
     }
 
     function openWallpapers() {
@@ -95,13 +96,5 @@ Singleton {
         stdout: StdioCollector {
             onStreamFinished: root.schemes = JSON.parse(text)
         }
-    }
-
-    FileDialog {
-        id: wallpaperDialog
-        title: "Обои для темы"
-        fileMode: FileDialog.OpenFiles
-        nameFilters: ["Картинки (*.png *.jpg *.jpeg *.gif *.bmp)"]
-        onAccepted: root.addWallpapers(selectedFiles.map(url => decodeURIComponent(url.toString().replace(/^file:\/\//, ""))))
     }
 }
