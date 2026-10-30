@@ -9,8 +9,8 @@ Item {
     property string selected: "all"
     readonly property real railWidth: 270
     readonly property real bodyHeight: 580
-    readonly property var monthTotals: Usage.months.map(month => Usage.monthValue(month, "", "eq"))
-    readonly property real monthSum: Math.max(0.000001, monthTotals.reduce((sum, value) => sum + value, 0))
+    readonly property var weekTotals: Usage.subscriptionIds.map(id => Usage.weekTokens(Usage.weeks(id)[Usage.weeks(id).length - 1]))
+    readonly property real weekSum: weekTotals.reduce((sum, value) => sum + value, 0)
     readonly property real costSum: Math.max(0.000001, Usage.allTotal("eq"))
     readonly property var rails: [allRail].concat(Usage.sourceIds.map(id => sourceRail(id)), [historyRail])
     readonly property var allRail: ({
@@ -28,11 +28,11 @@ Item {
             key: "history",
             title: "История",
             tint: Theme.text,
-            chip: Usage.months.length + " мес",
-            figure: Usage.moneyText(monthTotals[monthTotals.length - 1] ?? 0),
-            unit: "последний месяц",
-            caption: Usage.months.length > 1 && Usage.fullMonth(Usage.months[Usage.months.length - 2]) ? Usage.deltaText(monthTotals[monthTotals.length - 1], monthTotals[monthTotals.length - 2]) + " к " + Usage.monthLabel(Usage.months[Usage.months.length - 2]) : "нет полного прошлого месяца",
-            segments: monthTotals.map((value, index) => ({ ratio: value / monthSum, color: Theme.text, opacity: index === monthTotals.length - 1 ? 1 : 0.35 }))
+            chip: "по неделям",
+            figure: Usage.tokensText(weekSum),
+            unit: "токенов, эта неделя лимита",
+            caption: Usage.subscriptionIds.map((id, index) => Usage.sourceName(id) + " " + Usage.tokensText(weekTotals[index])).join(" · "),
+            segments: Usage.subscriptionIds.map((id, index) => ({ ratio: weekTotals[index] / Math.max(1, weekSum), color: Usage.sourceColor(id) }))
         })
 
     function sourceRail(id) {

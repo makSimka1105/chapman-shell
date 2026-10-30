@@ -22,14 +22,14 @@ Column {
             id: leftCard
             height: parent.height
             width: (root.width - 12) * 0.62
-            title: "Токены по дням, input и output"
+            title: Usage.history(root.source).days ? "Токены за неделю лимита с " + Usage.shortDate(Usage.chartDays(root.source)[0]) : "Токены по дням, input и output"
 
             UsageBars {
                 width: parent.width
-                labels: Usage.windowDays.map(day => Usage.dayLabel(day))
+                labels: Usage.chartDays(root.source).map(day => Usage.dayLabel(day))
                 series: [
-                    { values: Usage.series(root.source, "i"), color: Usage.inputColor },
-                    { values: Usage.series(root.source, "o"), color: Usage.outputColor }
+                    { values: Usage.chartSeries(root.source, "i"), color: Usage.inputColor },
+                    { values: Usage.chartSeries(root.source, "o"), color: Usage.outputColor }
                 ]
                 format: value => Usage.tokensText(value)
             }

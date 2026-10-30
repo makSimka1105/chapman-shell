@@ -145,8 +145,28 @@ Singleton {
         return months.reduce((sum, month) => sum + monthValue(month, id, key), 0);
     }
 
-    function monthLabel(month) {
-        return ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"][parseInt(month.m.slice(5, 7)) - 1];
+    function history(id) {
+        return source(id).history ?? ({});
+    }
+
+    function chartDays(id) {
+        return history(id).days ?? windowDays;
+    }
+
+    function chartSeries(id, key) {
+        return history(id)[key] ?? series(id, key);
+    }
+
+    function weeks(id) {
+        return history(id).weeks ?? [];
+    }
+
+    function weekTokens(week) {
+        return week ? week.i + week.o : 0;
+    }
+
+    function shortDate(iso) {
+        return Qt.formatDate(new Date(iso + "T12:00:00"), "dd.MM");
     }
 
     function tokensText(count) {
@@ -178,10 +198,6 @@ Singleton {
 
     function hasTokens(id) {
         return tokenTotal(id) > 0;
-    }
-
-    function fullMonth(month) {
-        return (month?.days ?? 0) >= 15;
     }
 
     function priceOf(fragment) {

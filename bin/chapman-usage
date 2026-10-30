@@ -20,6 +20,7 @@ QWEN_PROFILES = (HOME / ".local/state/qwen", HOME / ".local/share/qwen-profiles"
 HERMES_DATABASE = HOME / ".hermes/state.db"
 STORE = HOME / ".local/share/chapman-shell/usage-days.json"
 START = HOME / ".local/share/chapman-shell/usage-start"
+HISTORY = HOME / ".local/share/chapman-shell/usage-history.json"
 OPENROUTER_MODELS = HOME / ".cache/chapman-shell/or-models.json"
 OUTPUT = Path(os.environ["XDG_RUNTIME_DIR"]) / "chapman-usage.json"
 CLAUDE_URL = "https://claude.ai/api/oauth/usage"
@@ -29,6 +30,7 @@ OPENROUTER_URL = "https://openrouter.ai/api/v1"
 TIMEOUT = 10
 RECENT_DAYS = 2
 WINDOW_DAYS = 7
+MODEL_DAYS = 30
 PRICE_CACHE_SECONDS = 86400
 FIELDS = ("i", "o", "cr", "cw", "reqs", "eq")
 CLAUDE_WINDOWS = (("five_hour", "5 часов"), ("seven_day", "неделя"))
@@ -39,8 +41,8 @@ PROVIDERS = {
     "course-1": "litellm",
     "course-2": "litellm",
     "openrouter": "openrouter",
-    "hackathon": "hackathon",
 }
+IGNORED_KEYS = {"hackathon"}
 PROFILE_ALIASES = {"course": "course-1", "or": "openrouter", "free": "openrouter"}
 SUBSCRIPTIONS = (
     {"id": "claude", "name": "Claude", "color": "#e3a15b", "provider": "anthropic"},
@@ -50,7 +52,6 @@ KEY_STYLES = {
     "openrouter": ("OpenRouter", "#8fb4ff"),
     "course-1": ("Курс 1", "#7fd8b4"),
     "course-2": ("Курс 2", "#c3a6f2"),
-    "hackathon": ("Хакатон", "#f08fa8"),
 }
 SPARE_COLORS = ("#f2d36b", "#6fd3e8", "#e88f6f", "#b6e06b")
 
@@ -460,24 +461,33 @@ def settle(store):
                     entry.setdefault(field, 0)
 
 
-def source_tokens(store, window, source, hours):
-    daily = {field: [0] * WINDOW_DAYS for field in FIELDS}
-    models = {}
-    for index, day in enumerate(window):
-        for name, entry in store.get(day, {}).get(source, {}).items():
-            row = models.setdefault(name, dict.fromkeys(FIELDS, 0) | {"model": name, "p": entry.get("p")})
-            for field in FIELDS:
-                daily[field][index] += entry[field]
-                row[field] += entry[field]
-    daily["i"] = [fresh + read + write for fresh, read, write in zip(daily["i"], daily["cr"], daily["cw"])]
+def add_model(models, name, entry):
+    row = models.setdefault(name, dict.fromkeys(FIELDS, 0) | {"model": name, "p": entry.get("p")})
+    for field in FIELDS:
+        row[field] += entry[field]
+
+
+def finish_models(models):
     rows = sorted(models.values(), key=lambda row: -row["eq"])
     for row in rows:
         row["i"] += row["cr"] + row["cw"]
         row["eq"] = round(row["eq"], 6)
         if row["p"] and len(row["p"]) != 4:
             row["p"] = row["p"][:2]
+    return rows
+
+
+def source_tokens(store, window, source, hours):
+    daily = {field: [0] * WINDOW_DAYS for field in FIELDS}
+    models = {}
+    for index, day in enumerate(window):
+        for name, entry in store.get(day, {}).get(source, {}).items():
+            add_model(models, name, entry)
+            for field in FIELDS:
+                daily[field][index] += entry[field]
+    daily["i"] = [fresh + read + write for fresh, read, write in zip(daily["i"], daily["cr"], daily["cw"])]
     daily["eq"] = [round(value, 6) for value in daily["eq"]]
-    return {"daily": daily, "hourly": hours.get(source, [0] * 24), "eq_7d": round(sum(daily["eq"]), 6), "models": rows}
+    return {"daily": daily, "hourly": hours.get(source, [0] * 24), "eq_7d": round(sum(daily["eq"]), 6), "models": finish_models(models)}
 
 
 def month_buckets(store, source_ids):
@@ -498,6 +508,66 @@ def month_buckets(store, source_ids):
     return list(months.values())
 
 
+def day_list(first, count):
+    return [(first + timedelta(days=offset)).isoformat() for offset in range(count)]
+
+
+def day_totals(books, day, source):
+    totals = dict.fromkeys(FIELDS, 0)
+    for book in books:
+        for entry in book.get(day, {}).get(source, {}).values():
+            for field in FIELDS:
+                totals[field] += entry[field]
+    totals["i"] += totals.pop("cr") + totals.pop("cw")
+    return totals
+
+
+def limit_start(source, today):
+    window = next((entry for entry in source["live"]["windows"] if entry["id"] == "seven_day" and entry["resets_at"]), None)
+    if not window:
+        return today - timedelta(days=WINDOW_DAYS - 1)
+    reset = datetime.fromisoformat(window["resets_at"]).astimezone()
+    now = datetime.now().astimezone()
+    while reset <= now:
+        reset += timedelta(days=7)
+    return (reset - timedelta(days=7)).date()
+
+
+def limit_weeks(books, source, start):
+    used = [day for book in books for day, sources in book.items() if sources.get(source)]
+    if not used:
+        return []
+    weeks = []
+    begin = start
+    while (begin + timedelta(days=6)).isoformat() >= min(used):
+        totals = [day_totals(books, day, source) for day in day_list(begin, 7)]
+        weeks.insert(0, {"from": begin.isoformat()} | {field: round(sum(total[field] for total in totals), 6) for field in ("i", "o", "reqs", "eq")})
+        begin -= timedelta(days=7)
+    return weeks
+
+
+def recent_models(books, source, today):
+    models = {}
+    for day in day_list(today - timedelta(days=MODEL_DAYS - 1), MODEL_DAYS):
+        for book in books:
+            for name, entry in book.get(day, {}).get(source, {}).items():
+                add_model(models, name, entry)
+    return finish_models(models)
+
+
+def subscription_history(books, source, today):
+    start = limit_start(source, today)
+    days = day_list(start, WINDOW_DAYS)
+    totals = [day_totals(books, day, source["id"]) for day in days]
+    return {
+        "days": days,
+        "i": [total["i"] for total in totals],
+        "o": [total["o"] for total in totals],
+        "weeks": limit_weeks(books, source["id"], start),
+        "models": recent_models(books, source["id"], today),
+    }
+
+
 def build_sources(key_paths):
     sources = []
     for subscription in SUBSCRIPTIONS:
@@ -511,7 +581,7 @@ def build_sources(key_paths):
 
 
 def main():
-    key_paths = sorted(KEYS_DIR.glob("*.key"))
+    key_paths = sorted(path for path in KEYS_DIR.glob("*.key") if path.stem not in IGNORED_KEYS)
     key_ids = {path.stem for path in key_paths}
     full = "--full" in sys.argv or not STORE.exists()
     store = load(STORE, {})
@@ -525,8 +595,11 @@ def main():
     today = date.today()
     window = [(today - timedelta(days=back)).isoformat() for back in range(WINDOW_DAYS - 1, -1, -1)]
     sources = build_sources(key_paths)
+    books = (load(HISTORY, {}), store)
     for source in sources:
         source["tokens"] = source_tokens(store, window, source["id"], hours)
+        if source["kind"] == "subscription":
+            source["history"] = subscription_history(books, source, today)
     report = {
         "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "since": start.isoformat() if start else None,
