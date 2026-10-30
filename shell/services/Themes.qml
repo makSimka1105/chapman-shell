@@ -10,8 +10,6 @@ Singleton {
     property var themes: []
     property var schemes: []
 
-    signal pickRequested
-
     function run(args) {
         commandProcess.command = [bin, ...args];
         commandProcess.running = true;
@@ -50,7 +48,7 @@ Singleton {
     }
 
     function pickWallpapers() {
-        pickRequested();
+        pickProcess.running = true;
     }
 
     function openWallpapers() {
@@ -95,6 +93,18 @@ Singleton {
         command: [root.bin, "schemes", "--json"]
         stdout: StdioCollector {
             onStreamFinished: root.schemes = JSON.parse(text)
+        }
+    }
+
+    Process {
+        id: pickProcess
+        command: [Quickshell.shellDir + "/../../../bin/chapman-pick", "Обои для темы"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const paths = text.split("\n").filter(path => path.length > 0);
+                if (paths.length > 0)
+                    root.addWallpapers(paths);
+            }
         }
     }
 }

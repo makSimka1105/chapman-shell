@@ -204,8 +204,10 @@ def new_theme(theme_id, source=None):
 
 def ghostty_schemes():
     ghostty = shutil.which("ghostty")
-    folder = Path(ghostty).resolve().parent.parent / "share/ghostty/themes" if ghostty else None
-    return {path.name: path for path in sorted(folder.iterdir())} if folder and folder.is_dir() else {}
+    folders = [CONFIG.parent / "ghostty/themes"]
+    if ghostty:
+        folders.append(Path(ghostty).resolve().parent.parent / "share/ghostty/themes")
+    return {path.name: path for folder in folders if folder.is_dir() for path in sorted(folder.iterdir())}
 
 
 def parse_scheme(text):
