@@ -43,7 +43,7 @@ Column {
             caption: "DND"
             glyphColor: Notifications.dnd ? Theme.accent : Theme.textDim
             captionColor: Notifications.dnd ? Theme.text : Theme.textDim
-            onClicked: Notifications.dnd = !Notifications.dnd
+            onClicked: Notifications.toggleDnd()
         }
 
         HomeTile {

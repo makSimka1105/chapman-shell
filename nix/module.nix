@@ -104,6 +104,7 @@ in
         Description = "Lock chapman-shell after idle, suspend later, and lock before every sleep";
         PartOf = [ "chapman-shell.service" ];
         After = [ "chapman-shell.service" ];
+        ConditionFileNotEmpty = "!%h/.local/state/chapman-shell/awake";
       };
       Service = {
         ExecStart = ''${lib.getExe pkgs.swayidle} -w timeout 180 "${idleStep} screen-off" resume "${niri} msg action power-on-monitors" timeout 300 "${idleStep} lock-battery" timeout 600 "${idleStep} suspend-battery" timeout 1200 "${idleStep} lock-ac" timeout 1800 "${idleStep} suspend-ac" before-sleep "${lock}" after-resume "${niri} msg action power-on-monitors"'';

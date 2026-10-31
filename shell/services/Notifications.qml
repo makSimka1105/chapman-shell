@@ -1,13 +1,15 @@
 pragma Singleton
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Notifications
 
 Singleton {
     id: root
 
     property var queue: []
-    property bool dnd: false
+    readonly property string stateDir: Quickshell.env("HOME") + "/.local/state/chapman-shell"
+    property bool dnd: dndFlag.text().trim() === "1"
     readonly property var history: server.trackedNotifications.values
     readonly property var current: queue[0] ?? null
 
@@ -17,6 +19,11 @@ Singleton {
         if (notification.urgency === NotificationUrgency.Low)
             return 1500;
         return 2500;
+    }
+
+    function toggleDnd() {
+        dnd = !dnd;
+        dndFlag.setText(dnd ? "1" : "");
     }
 
     function next() {
@@ -51,5 +58,13 @@ Singleton {
             if (!root.dnd || notification.urgency === NotificationUrgency.Critical)
                 root.queue = [...root.queue, notification];
         }
+    }
+
+    FileView {
+        id: dndFlag
+        path: root.stateDir + "/dnd"
+        blockLoading: true
+        blockWrites: true
+        printErrors: false
     }
 }
