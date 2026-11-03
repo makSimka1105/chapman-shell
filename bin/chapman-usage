@@ -24,6 +24,8 @@ HISTORY = HOME / ".local/share/chapman-shell/usage-history.json"
 OPENROUTER_MODELS = HOME / ".cache/chapman-shell/or-models.json"
 OUTPUT = Path(os.environ["XDG_RUNTIME_DIR"]) / "chapman-usage.json"
 CLAUDE_URL = "https://claude.ai/api/oauth/usage"
+OPENCODE_AUTH = HOME / ".local/share/opencode/auth.json"
+OPENCODE_URL = "https://opencode.ai/api/experimental/usage/limits"
 CLAUDE_CURL = "curl_chrome136"
 LITELLM_URL = "https://litellm.data-light.ru"
 OPENROUTER_URL = "https://openrouter.ai/api/v1"
@@ -47,6 +49,7 @@ PROFILE_ALIASES = {"course": "course-1", "or": "openrouter", "free": "openrouter
 SUBSCRIPTIONS = (
     {"id": "claude", "name": "Claude", "color": "#e3a15b", "provider": "anthropic"},
     {"id": "codex", "name": "ChatGPT", "color": "#9be37f", "provider": "openai"},
+    {"id": "opencode-go", "name": "OpenCode Go", "color": "#d39bff", "provider": "opencode"},
 )
 KEY_STYLES = {
     "openrouter": ("OpenRouter", "#8fb4ff"),
@@ -193,7 +196,25 @@ def codex_live():
     return {"windows": codex_windows(limits)}, "ok"
 
 
-SUBSCRIPTION_FETCHERS = {"claude": claude_live, "codex": codex_live}
+def opencode_live():
+    try:
+        token = load(OPENCODE_AUTH, {}).get("openai", {}).get("key")
+        if not token:
+            return {"windows": []}, "not logged in"
+        info = get_json(OPENCODE_URL, token) or {}
+        windows = []
+        for key, label in (("five_hour", "5 часов"), ("seven_day", "неделя"), ("monthly", "месяц")):
+            entry = info.get(key) or info.get("data", {}).get(key) or {}
+            used = entry.get("used", entry.get("utilization"))
+            if used is None:
+                continue
+            windows.append({"id": key, "label": label, "used": used if used <= 1 else used / 100, "resets_at": entry.get("resets_at")})
+        return {"windows": windows}, "ok" if windows else "no data yet"
+    except (urllib.error.URLError, TimeoutError, KeyError, ValueError):
+        return {"windows": []}, "network error"
+
+
+SUBSCRIPTION_FETCHERS = {"claude": claude_live, "codex": codex_live, "opencode-go": opencode_live}
 
 
 def litellm_usage(token):

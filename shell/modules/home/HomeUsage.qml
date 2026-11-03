@@ -27,6 +27,8 @@ Item {
                 { id: "openrouter", label: "OR" },
                 { id: "claude", label: "CL 7д", window: "seven_day" },
                 { id: "codex", label: "CX 7д", window: "seven_day" },
+                { id: "opencode-go", label: "OC 5ч", window: "five_hour" },
+                { id: "opencode-go", label: "OC 7д", window: "seven_day" },
                 { id: "" }
             ]
 
