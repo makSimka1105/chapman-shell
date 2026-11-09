@@ -41,7 +41,7 @@ Item {
     property real squash: 1
     // Light themes float as a detached island; dark themes stay as a notch.
     property real detach: state === "search" || Theme.light ? 1 : 0
-    readonly property real detachOffset: Math.max(0, detach) * Tokens.islandDetachGap
+    readonly property real detachOffset: Math.max(0, detach) * Tokens.islandDetachGap * (Theme.light ? 0.5 : 1)
     readonly property real flare: mode === "rest" ? 9 : mode === "home" ? 26 : 18
     readonly property real swell: press.pressed ? 1 - 4 / Math.max(goal.width, goal.height) : hover.hovered ? 1 + 6 / Math.max(goal.width, goal.height) : 1
 
