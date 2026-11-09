@@ -33,7 +33,7 @@ Item {
             anchors.centerIn: parent
             visible: image.status !== Image.Ready
             text: (root.notification?.appName || root.notification?.summary || "?").charAt(0).toUpperCase()
-            color: "black"
+            color: Theme.onAccent
             font.pixelSize: Tokens.fontHeading
             font.weight: Font.Bold
         }

@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import qs.core
+import qs.services
 
 PanelWindow {
     id: root
@@ -17,12 +18,17 @@ PanelWindow {
     mask: Region {}
 
     Canvas {
+        id: canvas
         anchors.fill: parent
+        visible: !Theme.light
+        onVisibleChanged: requestPaint()
         onWidthChanged: requestPaint()
         onPaint: {
             const ctx = getContext("2d");
             const r = height;
             ctx.reset();
+            if (!visible)
+                return;
             ctx.fillStyle = "black";
             ctx.beginPath();
             ctx.moveTo(0, 0);

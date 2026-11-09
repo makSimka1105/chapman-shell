@@ -41,7 +41,7 @@ Item {
         Label {
             anchors.centerIn: parent
             text: root.item.glyph ?? root.fallback
-            color: root.item.glyph !== undefined ? Theme.accent : "black"
+            color: root.item.glyph !== undefined ? Theme.accent : Theme.onAccent
             font.family: root.item.glyph !== undefined ? "JetBrainsMono Nerd Font" : Theme.font
             font.pixelSize: parent.height * 0.5
             font.weight: Font.Bold

@@ -118,7 +118,7 @@ Rectangle {
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: Media.playing ? 0 : 1
                 text: Media.playing ? "󰏤" : "󰐊"
-                color: "black"
+                color: Theme.onAccent
                 font.family: "JetBrainsMono Nerd Font"
                 font.pixelSize: Tokens.fontSubtitle
             }

@@ -48,7 +48,7 @@ Column {
 
             anchors.centerIn: parent
             text: chip.text
-            color: chip.active ? "black" : Theme.text
+            color: chip.active ? Theme.body : Theme.text
             font.pixelSize: Tokens.fontSmall
             font.weight: Font.DemiBold
         }
