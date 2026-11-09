@@ -24,6 +24,8 @@ Singleton {
 
     readonly property bool light: theme.variant === "light"
     readonly property color body: light ? palette.surface : "black"
+    readonly property color fill: (theme.colors ?? {}).primary_container ?? (light ? "#dadada" : palette.accent)
+    readonly property color onFill: light ? palette.text : palette.onAccent
     readonly property color text: palette.text
     readonly property color textDim: Qt.alpha(palette.text, 0.55)
     readonly property color faint: Qt.alpha(palette.text, 0.16)

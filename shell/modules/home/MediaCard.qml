@@ -112,13 +112,13 @@ Rectangle {
             width: 32
             height: 32
             radius: Tokens.radiusMedia
-            color: Theme.accent
+            color: Theme.fill
 
             Label {
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: Media.playing ? 0 : 1
                 text: Media.playing ? "󰏤" : "󰐊"
-                color: Theme.onAccent
+                color: Theme.onFill
                 font.family: "JetBrainsMono Nerd Font"
                 font.pixelSize: Tokens.fontSubtitle
             }

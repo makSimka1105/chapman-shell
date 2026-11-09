@@ -27,13 +27,13 @@ Item {
         width: 46
         height: 46
         radius: Tokens.radiusChip
-        color: root.critical ? Theme.warning : Theme.accent
+        color: root.critical ? Theme.warning : Theme.fill
 
         Label {
             anchors.centerIn: parent
             visible: image.status !== Image.Ready
             text: (root.notification?.appName || root.notification?.summary || "?").charAt(0).toUpperCase()
-            color: Theme.onAccent
+            color: root.critical ? Theme.warning : Theme.onFill
             font.pixelSize: Tokens.fontHeading
             font.weight: Font.Bold
         }

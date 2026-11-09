@@ -36,12 +36,12 @@ Item {
         anchors.fill: parent
         visible: root.item.glyph !== undefined || (root.item.icon !== undefined && icon.status !== Image.Ready)
         radius: width / 4
-        color: root.item.glyph !== undefined ? Qt.alpha(Theme.accent, 0.18) : Theme.accent
+        color: root.item.glyph !== undefined ? Qt.alpha(Theme.accent, 0.18) : Theme.fill
 
         Label {
             anchors.centerIn: parent
             text: root.item.glyph ?? root.fallback
-            color: root.item.glyph !== undefined ? Theme.accent : Theme.onAccent
+            color: root.item.glyph !== undefined ? Theme.accent : Theme.onFill
             font.family: root.item.glyph !== undefined ? "JetBrainsMono Nerd Font" : Theme.font
             font.pixelSize: parent.height * 0.5
             font.weight: Font.Bold

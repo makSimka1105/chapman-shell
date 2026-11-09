@@ -53,7 +53,7 @@ Item {
         x: -root.flare
         width: root.flare
         height: root.flare
-        visible: root.flare > 0.5
+        visible: root.flare > 0.5 && !Theme.light
         preferredRendererType: Shape.CurveRenderer
 
         ShapePath {
@@ -77,7 +77,7 @@ Item {
         x: root.width
         width: root.flare
         height: root.flare
-        visible: root.flare > 0.5
+        visible: root.flare > 0.5 && !Theme.light
         preferredRendererType: Shape.CurveRenderer
 
         ShapePath {
