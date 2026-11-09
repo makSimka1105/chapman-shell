@@ -33,10 +33,10 @@ Item {
     RectangularShadow {
         anchors.fill: body
         radius: root.radius
-        blur: 28
-        spread: 2
-        offset.y: 6
-        color: Qt.alpha("black", 0.45)
+        blur: Theme.light ? 14 : 28
+        spread: Theme.light ? 0 : 2
+        offset.y: Theme.light ? 3 : 6
+        color: Qt.alpha("black", Theme.light ? 0.22 : 0.45)
     }
 
     Rectangle {
