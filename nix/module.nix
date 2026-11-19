@@ -46,6 +46,10 @@ in
             type = lib.types.nullOr lib.types.path;
             default = null;
           };
+          replace = lib.mkOption {
+            type = lib.types.nullOr (lib.types.listOf lib.types.str);
+            default = null;
+          };
         };
       });
     };

@@ -145,8 +145,13 @@ def context(theme_id, theme, wallpaper):
         "id": theme_id,
         "name": theme["name"],
         "variant": theme["variant"],
+        "variant_is_dark": "true" if theme["variant"] == "dark" else "false",
+        "syntax_highlight": "catppuccin-mocha" if theme["variant"] == "dark" else "catppuccin-latte",
         "colors": colors,
         "terminal": terminal,
+        "zen_scheme": "1" if theme["variant"] == "light" else "0",
+        "zen_bg_enabled": "false" if theme["variant"] == "light" else "true",
+        "zen_transparency": terminal["background"] + "cc",
         "overview": {
             "zoom": theme.get("overview", {}).get("zoom", 0.375),
             "backdrop_color": theme.get("overview", {}).get("backdrop_color", colors["background"]),
@@ -180,16 +185,28 @@ def targets():
 
 def render_targets(values):
     for name, target in targets().items():
-        if target.get("template"):
-            path = Path(target.get("path") or STATE / name).expanduser()
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(render(Path(target["template"]).read_text(), values))
+        if not target.get("template"):
+            continue
+        rendered = render(Path(target["template"]).read_text(), values)
+        path = Path(target.get("path") or STATE / name).expanduser()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        replace = target.get("replace")
+        if replace:
+            begin, end = replace
+            block = f"{begin}\n{rendered}\n{end}"
+            text = path.read_text() if path.exists() else ""
+            pattern = re.compile(re.escape(begin) + r".*?" + re.escape(end), re.S)
+            text = pattern.sub(block, text) if pattern.search(text) else text.rstrip("\n") + "\n\n" + block + "\n"
+            path.write_text(text)
+        else:
+            path.write_text(rendered)
 
 
-def run_targets():
+def run_targets(values):
+    env = {**os.environ, "CHAPMAN_VARIANT": values.get("variant", "dark")}
     for target in targets().values():
         if target.get("reload"):
-            subprocess.run(["sh", "-c", target["reload"]], capture_output=True, check=False)
+            subprocess.run(["sh", "-c", target["reload"]], capture_output=True, check=False, env=env)
         if target.get("hook"):
             subprocess.run([target["hook"], str(COLORS)], capture_output=True, check=False)
 
@@ -203,7 +220,7 @@ def apply(theme_id, wallpaper=None):
     remembered = {**current().get("remembered", {}), theme_id: wallpaper}
     CURRENT.write_text(json.dumps({"theme": theme_id, "wallpaper": wallpaper, "remembered": remembered}) + "\n")
     render_targets(values)
-    run_targets()
+    run_targets(values)
 
 
 def switch_theme(theme_id):
