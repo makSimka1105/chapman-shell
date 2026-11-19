@@ -86,16 +86,71 @@ def mix(color, other, amount):
     return "#" + "".join(f"{channel:02x}" for channel in channels)
 
 
+def derive_colors(palette):
+    ansi = palette["ansi"]
+    bg = palette["background"]
+    fg = palette["foreground"]
+    accent = palette["accent"]
+
+    def contrast(color):
+        red, green, blue = (int(color[i:i + 2], 16) / 255 for i in (1, 3, 5))
+        return "#000000" if 0.2126 * red + 0.7152 * green + 0.0722 * blue >= 0.5 else "#ffffff"
+
+    return {
+        "background": bg,
+        "surface": mix(bg, fg, 0.05),
+        "surface_dim": mix(bg, "#000000", 0.15),
+        "surface_bright": mix(bg, fg, 0.12),
+        "surface_container": mix(bg, fg, 0.05),
+        "surface_container_high": mix(bg, fg, 0.08),
+        "surface_container_highest": mix(bg, fg, 0.12),
+        "on_surface": fg,
+        "on_surface_variant": mix(bg, fg, 0.62),
+        "outline": mix(bg, fg, 0.20),
+        "outline_variant": mix(bg, fg, 0.12),
+        "primary": accent,
+        "on_primary": contrast(accent),
+        "primary_container": mix(bg, accent, 0.30),
+        "primary_fixed": accent,
+        "secondary": ansi[5],
+        "secondary_container": mix(bg, ansi[5], 0.30),
+        "tertiary": ansi[6],
+        "tertiary_fixed": ansi[6],
+        "error": ansi[1],
+        "warning": ansi[3],
+        "info": ansi[4],
+        "success": ansi[2],
+    }
+
+
+def terminal_from_palette(palette):
+    return {
+        "background": palette["background"],
+        "foreground": palette["foreground"],
+        "cursor": palette["cursor"],
+        "selection_background": palette["selection_background"],
+        "selection_foreground": palette["selection_foreground"],
+        "palette": palette["ansi"],
+    }
+
+
 def context(theme_id, theme, wallpaper):
     glass = dict(theme["glass"])
     glass["alpha"] = alpha_hex(glass["opacity"])
     glass["alpha_zed"] = alpha_hex(glass["opacity"] - ZED_ALPHA_GAP)
+    palette = theme.get("palette")
+    colors = theme.get("colors") or derive_colors(palette)
+    terminal = theme.get("terminal") or terminal_from_palette(palette)
     return {
         "id": theme_id,
         "name": theme["name"],
         "variant": theme["variant"],
-        "colors": theme["colors"],
-        "terminal": theme["terminal"],
+        "colors": colors,
+        "terminal": terminal,
+        "overview": {
+            "zoom": theme.get("overview", {}).get("zoom", 0.375),
+            "backdrop_color": theme.get("overview", {}).get("backdrop_color", colors["background"]),
+        },
         "glass": glass,
         "window": {**WINDOW, **theme.get("window", {})},
         "wallpaper": wallpaper,
@@ -332,13 +387,14 @@ def listing_json():
     entries = []
     for theme_id in theme_ids():
         theme = load_theme(theme_id)
+        values = context(theme_id, theme, next(iter(theme["wallpapers"]), ""))
         entries.append({
             "id": theme_id,
             "name": theme["name"],
             "current": theme_id == now,
             "user": (DATA / "themes" / theme_id / "theme.json").exists(),
             "wallpapers": theme["wallpapers"],
-            "colors": {key: theme["colors"][key] for key in SWATCHES},
+            "colors": {key: values["colors"][key] for key in SWATCHES},
         })
     print(json.dumps(entries, ensure_ascii=False))
 
