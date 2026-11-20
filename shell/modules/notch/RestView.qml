@@ -33,7 +33,7 @@ Item {
 
     RestSlot {
         anchors.right: parent.right
-        anchors.rightMargin: Tokens.marginPanel
+        anchors.rightMargin: Tokens.marginWide
         anchors.verticalCenter: parent.verticalCenter
         zone: root.rest.right
         layout: root.rest.layout
