@@ -143,19 +143,6 @@ Item {
             }
         }
 
-        Row {
-            id: caption
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: Tokens.spacingSmall
-
-            Glyph {
-                anchors.verticalCenter: parent.verticalCenter
-                text: root.current.glyph
-                color: PowerProfiles.profile === PowerProfile.Performance ? Theme.warning : Theme.accent
-                font.pixelSize: Tokens.fontSubtitle
-            }
-
-        }
     }
 
 }

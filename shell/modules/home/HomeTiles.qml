@@ -78,6 +78,7 @@ Column {
         }
 
         HomeTile {
+            id: powerTile
             glyph: root.currentProfile.glyph
             caption: "Power"
             glyphColor: PowerProfiles.profile === PowerProfile.Performance ? Theme.warning : Theme.accent
@@ -104,8 +105,8 @@ Column {
 
     Rectangle {
         visible: root.picker === "power"
-        x: 0
-        y: grid.height + Tokens.spacingSmall
+        x: powerTile.x
+        y: powerTile.y + powerTile.height + Tokens.spacingSmall
         width: powerRow.width + Tokens.spacingSmall * 2
         height: 42
         radius: height / 2
