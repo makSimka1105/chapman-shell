@@ -1,0 +1,32 @@
+#!/bin/sh
+
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/chapman-shell"
+state_file="$state_dir/lid-open"
+
+case "${1:-toggle}" in
+  on)
+    mkdir -p "$state_dir"
+    printf '1' > "$state_file"
+    systemctl --user start chapman-shell-lid
+    codex remote-control start
+    ;;
+  off)
+    rm -f "$state_file"
+    systemctl --user stop chapman-shell-lid
+    codex remote-control stop
+    ;;
+  toggle)
+    if [ -s "$state_file" ]; then
+      "$0" off
+    else
+      "$0" on
+    fi
+    ;;
+  status)
+    [ -s "$state_file" ] && printf '%s\n' on || printf '%s\n' off
+    ;;
+  *)
+    printf 'usage: codex-lid [on|off|toggle|status]\n' >&2
+    exit 2
+    ;;
+esac

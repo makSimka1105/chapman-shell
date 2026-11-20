@@ -12,7 +12,7 @@ Singleton {
     function toggle() {
         active = !active;
         flag.setText(active ? "1" : "");
-        switcher.command = ["systemctl", "--user", active ? "start" : "stop", "chapman-shell-lid"];
+        switcher.command = ["codex-lid", active ? "on" : "off"];
         switcher.running = true;
     }
 

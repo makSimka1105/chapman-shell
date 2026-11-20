@@ -18,7 +18,7 @@ stdenvNoCC.mkDerivation {
     mkdir -p $out/share/chapman-shell $out/bin
     cp -r shell themes bin niri.kdl $out/share/chapman-shell/
     patchShebangs $out/share/chapman-shell/bin
-    ln -s $out/share/chapman-shell/bin/chapman-shell $out/share/chapman-shell/bin/chapman-usage $out/bin/
+    ln -s $out/share/chapman-shell/bin/chapman-shell $out/share/chapman-shell/bin/chapman-usage $out/share/chapman-shell/bin/codex-lid $out/bin/
     makeWrapper ${pickPython}/bin/python3 $out/bin/chapman-pick \
       --add-flags $out/share/chapman-shell/bin/chapman-pick \
       --prefix GI_TYPELIB_PATH : ${glib.out}/lib/girepository-1.0:${gobject-introspection}/lib/girepository-1.0
