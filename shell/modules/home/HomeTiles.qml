@@ -23,6 +23,16 @@ Column {
     signal pageRequested(string page)
     signal pickerToggled(string name)
 
+    function cycleLayout() {
+        if (Niri.layouts.length > 0)
+            Spawn.run(["niri", "msg", "action", "switch-layout", String((Niri.layoutIndex + 1) % Niri.layouts.length)]);
+    }
+
+    function cyclePowerProfile() {
+        const index = profiles.findIndex(entry => entry.profile === PowerProfiles.profile);
+        PowerProfiles.profile = profiles[(index + 1) % profiles.length].profile;
+    }
+
     spacing: Tokens.spacingRelaxed
 
     Grid {
@@ -34,7 +44,7 @@ Column {
             caption: Niri.layoutCode
             glyphColor: Theme.textDim
             captionColor: Theme.textDim
-            onClicked: root.pickerToggled("layout")
+            onClicked: root.cycleLayout()
         }
 
         HomeTile {
@@ -78,12 +88,11 @@ Column {
         }
 
         HomeTile {
-            id: powerTile
             glyph: root.currentProfile.glyph
             caption: "Power"
             glyphColor: PowerProfiles.profile === PowerProfile.Performance ? Theme.warning : Theme.accent
             captionColor: Theme.textDim
-            onClicked: root.pickerToggled("power")
+            onClicked: root.cyclePowerProfile()
         }
 
         HomeTile {
@@ -103,52 +112,4 @@ Column {
         }
     }
 
-    Rectangle {
-        visible: root.picker === "power"
-        x: powerTile.x
-        y: powerTile.y + powerTile.height + Tokens.spacingSmall
-        width: powerRow.width + Tokens.spacingSmall * 2
-        height: 42
-        radius: height / 2
-        color: Qt.rgba(0.08, 0.08, 0.09, 0.96)
-        border.color: Theme.faint
-
-        Row {
-            id: powerRow
-            anchors.centerIn: parent
-            spacing: Tokens.spacingSmall
-
-            Repeater {
-                model: root.profiles
-
-                Item {
-                    required property var modelData
-                    required property int index
-                    width: 34
-                    height: 34
-
-                    Rectangle {
-                        anchors.fill: parent
-                        radius: height / 2
-                        color: PowerProfiles.profile === modelData.profile ? Theme.card : "transparent"
-                    }
-
-                    Glyph {
-                        anchors.centerIn: parent
-                        text: modelData.glyph
-                        color: PowerProfiles.profile === modelData.profile ? Theme.text : Theme.textDim
-                        font.pixelSize: Tokens.fontSubtitle
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            PowerProfiles.profile = modelData.profile;
-                            root.pickerToggled("power");
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
