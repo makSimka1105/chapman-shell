@@ -117,5 +117,20 @@ in
       };
       Install.WantedBy = [ "chapman-shell.service" ];
     };
+
+    systemd.user.services.chapman-shell-lid = {
+      Unit = {
+        Description = "Keep working when the laptop lid is closed";
+        PartOf = [ "chapman-shell.service" ];
+        After = [ "chapman-shell.service" ];
+        ConditionFileNotEmpty = "%h/.local/state/chapman-shell/lid-open";
+      };
+      Service = {
+        ExecStart = "${lib.getExe' pkgs.systemd "systemd-inhibit"} --what=handle-lid-switch --mode=block --why=chapman-shell-lid sleep infinity";
+        Restart = "on-failure";
+        RestartSec = "5s";
+      };
+      Install.WantedBy = [ "chapman-shell.service" ];
+    };
   };
 }

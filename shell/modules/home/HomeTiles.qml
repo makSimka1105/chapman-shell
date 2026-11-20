@@ -55,6 +55,14 @@ Column {
         }
 
         HomeTile {
+            glyph: "󰛐"
+            caption: "Lid"
+            glyphColor: LidOpen.active ? Theme.accent : Theme.textDim
+            captionColor: LidOpen.active ? Theme.text : Theme.textDim
+            onClicked: LidOpen.toggle()
+        }
+
+        HomeTile {
             glyph: "󰍺"
             caption: "iPad"
             glyphColor: root.secondOn ? Theme.accent : Theme.textDim
