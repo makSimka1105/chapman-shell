@@ -74,12 +74,6 @@
         "span": 1
       },
       {
-        "id": "usage",
-        "enabled": true,
-        "col": 0,
-        "span": 1
-      },
-      {
         "id": "clock",
         "enabled": true,
         "col": 1,
@@ -94,7 +88,7 @@
       {
         "id": "tiles",
         "enabled": true,
-        "col": 2,
+        "col": 0,
         "span": 1
       },
       {

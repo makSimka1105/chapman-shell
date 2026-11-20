@@ -19,7 +19,7 @@ Column {
     spacing: Tokens.spacingRelaxed
 
     Grid {
-        columns: 2
+        columns: 3
         spacing: Tokens.spacingItem
 
         HomeTile {
@@ -60,6 +60,14 @@ Column {
             glyphColor: LidOpen.active ? Theme.accent : Theme.textDim
             captionColor: LidOpen.active ? Theme.text : Theme.textDim
             onClicked: LidOpen.toggle()
+        }
+
+        HomeTile {
+            glyph: "󰄀"
+            caption: "Limits"
+            glyphColor: Theme.textDim
+            captionColor: Theme.textDim
+            onClicked: root.pageRequested("usage")
         }
 
         HomeTile {
