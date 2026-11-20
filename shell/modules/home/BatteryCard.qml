@@ -50,8 +50,10 @@ Item {
         return charging ? Theme.charge : level < 0.2 ? Theme.warning : Theme.accent;
     }
 
-    width: column.width
-    height: column.height
+    implicitWidth: column.implicitWidth
+    implicitHeight: column.implicitHeight
+    width: parent ? parent.width : implicitWidth
+    height: implicitHeight
 
     component BatterySlot: Item {
         id: slot
@@ -129,6 +131,7 @@ Item {
 
     Column {
         id: column
+        anchors.horizontalCenter: parent.horizontalCenter
         spacing: Tokens.spacingItem
 
         Grid {
