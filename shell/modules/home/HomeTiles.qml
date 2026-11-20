@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import Quickshell.Services.UPower
 import qs.core
 import qs.services
 import qs.widgets
@@ -12,6 +13,12 @@ Column {
     readonly property string secondOutput: "HDMI-A-1"
     readonly property bool secondOn: Niri.workspaces.some(workspace => workspace.output === secondOutput)
     readonly property string tilingLabel: ({ halves: "Strip", grid: "Grid", tabs: "Tabs", float: "Float" })[Tiling.preset] ?? "Tiling"
+    readonly property var profiles: [
+        { profile: PowerProfile.PowerSaver, glyph: "󰌪" },
+        { profile: PowerProfile.Balanced, glyph: "󰾅" },
+        { profile: PowerProfile.Performance, glyph: "󱐋" }
+    ].filter(entry => entry.profile !== PowerProfile.Performance || PowerProfiles.hasPerformanceProfile)
+    readonly property var currentProfile: profiles.find(entry => entry.profile === PowerProfiles.profile) ?? profiles[0]
 
     signal pageRequested(string page)
     signal pickerToggled(string name)
@@ -71,6 +78,14 @@ Column {
         }
 
         HomeTile {
+            glyph: root.currentProfile.glyph
+            caption: "Power"
+            glyphColor: PowerProfiles.profile === PowerProfile.Performance ? Theme.warning : Theme.accent
+            captionColor: Theme.textDim
+            onClicked: root.pickerToggled("power")
+        }
+
+        HomeTile {
             glyph: "󰍺"
             caption: "iPad"
             glyphColor: root.secondOn ? Theme.accent : Theme.textDim
@@ -84,6 +99,55 @@ Column {
             glyphColor: Theme.textDim
             captionColor: Theme.textDim
             onClicked: Spawn.run(["qs", "-p", Quickshell.shellDir, "ipc", "call", "settings", "toggle"])
+        }
+    }
+
+    Rectangle {
+        visible: root.picker === "power"
+        x: 0
+        y: grid.height + Tokens.spacingSmall
+        width: powerRow.width + Tokens.spacingSmall * 2
+        height: 42
+        radius: height / 2
+        color: Qt.rgba(0.08, 0.08, 0.09, 0.96)
+        border.color: Theme.faint
+
+        Row {
+            id: powerRow
+            anchors.centerIn: parent
+            spacing: Tokens.spacingSmall
+
+            Repeater {
+                model: root.profiles
+
+                Item {
+                    required property var modelData
+                    required property int index
+                    width: 34
+                    height: 34
+
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: height / 2
+                        color: PowerProfiles.profile === modelData.profile ? Theme.card : "transparent"
+                    }
+
+                    Glyph {
+                        anchors.centerIn: parent
+                        text: modelData.glyph
+                        color: PowerProfiles.profile === modelData.profile ? Theme.text : Theme.textDim
+                        font.pixelSize: Tokens.fontSubtitle
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            PowerProfiles.profile = modelData.profile;
+                            root.pickerToggled("power");
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -155,32 +155,7 @@ Item {
                 font.pixelSize: Tokens.fontSubtitle
             }
 
-            Label {
-                anchors.verticalCenter: parent.verticalCenter
-                text: root.caption()
-                color: Theme.textDim
-                font.pixelSize: Tokens.fontBody
-            }
-
-            HoverHandler {
-                id: captionHover
-            }
         }
     }
 
-    HoverPicker {
-        x: caption.x
-        y: caption.y + caption.height + 4 - height
-        rowHeight: 26
-        pickerWidth: 170
-        hoverable: true
-        held: captionHover.hovered
-        transformOrigin: Item.TopLeft
-        entries: root.profiles.map(entry => ({
-                    glyph: entry.glyph,
-                    title: entry.title,
-                    active: PowerProfiles.profile === entry.profile
-                }))
-        onPicked: index => PowerProfiles.profile = root.profiles[index].profile
-    }
 }
