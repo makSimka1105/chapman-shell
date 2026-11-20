@@ -60,7 +60,7 @@
   },
   "home": {
     "grid": {
-      "columns": 3,
+      "columns": 4,
       "gap": 40,
       "rowGap": 12,
       "width": "fit",
@@ -94,7 +94,7 @@
       {
         "id": "links",
         "enabled": true,
-        "col": 2,
+        "col": 3,
         "span": 1
       }
     ]
