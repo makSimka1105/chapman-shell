@@ -52,6 +52,12 @@ Item {
                     widths[entry.col + 1] += lack;
             }
 
+        if (placed.length === 0) {
+            implicitWidth = inset * 2;
+            implicitHeight = 0;
+            return;
+        }
+
         const used = widths.filter((width, col) => heights[col] > 0);
         const gaps = Math.max(used.length - 1, 0);
         const sum = used.reduce((total, width) => total + width, 0);
