@@ -75,6 +75,18 @@ Item {
                 cursor += widths[col] + spacing;
         }
 
+        function rightOf(entry) {
+            return entry.span === 2 ? lefts[entry.col + 1] + widths[entry.col + 1] : lefts[entry.col] + widths[entry.col];
+        }
+        const anchor = placed.find(entry => entry.slot.centers);
+        const leftEdge = Math.min(...placed.map(entry => lefts[entry.col]));
+        const rightEdge = Math.max(...placed.map(rightOf));
+        const axis = anchor === undefined ? (leftEdge + rightEdge) / 2 : (lefts[anchor.col] + rightOf(anchor)) / 2;
+        const half = fit ? Math.max(axis - leftEdge, rightEdge - axis) : grid.width / 2 - inset;
+        const shift = inset + half - axis;
+        for (let col = 0; col < count; col++)
+            lefts[col] += shift;
+
         const tallest = Math.max(...heights) - grid.rowGap;
         const shifts = heights.map(height => (tallest - (height - grid.rowGap)) / 2);
         for (const entry of placed)
@@ -84,12 +96,12 @@ Item {
                 shifts[entry.col + 1] = shared;
             }
         for (const entry of placed) {
-            entry.slot.x = lefts[entry.col];
+            entry.slot.x = lefts[entry.col] + (entry.span === 1 ? (widths[entry.col] - entry.slot.width) / 2 : 0);
             entry.slot.y = entry.top + shifts[entry.col];
         }
         placements = placed.map(entry => ({ id: entry.slot.modelData.id, col: entry.col, x: entry.slot.x, y: entry.slot.y, width: entry.slot.width, height: entry.slot.height }));
         columnBounds = lefts.map((left, col) => ({ left: left, width: widths[col] }));
-        implicitWidth = fit ? sum + spacing * gaps + inset * 2 : grid.width;
+        implicitWidth = fit ? (inset + half) * 2 : grid.width;
         implicitHeight = Math.max(tallest, 0);
     }
 
@@ -106,6 +118,7 @@ Item {
             readonly property var col: modelData.col
             readonly property int span: Math.min(Math.max(modelData.span ?? 1, 1), 2)
             readonly property bool stretches: modelData.id === "media"
+            readonly property bool centers: modelData.id === "clock"
 
             sourceComponent: root.widgets.component(modelData.id)
             visible: item !== null && item.present
